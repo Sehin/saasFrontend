@@ -8,3 +8,36 @@ width: 5em;
 .logInButton:hover { 
 text-decoration: underline; 
 } 
+
+.menu-block-items{
+    display:inline-block;
+    padding:0 10px 0 10px;
+}
+
+.center-menu{
+    margin-left:100px;
+    margin-right:100px;
+}
+
+.center-block{
+display:block; text-align:center; margin:0 auto;
+}
+
+
+.ss-container{
+    padding:10px;
+    background-color:#d7eaff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.ss-container:hover{
+    transition-duration:0.5s;
+    background-color:rgba(215, 234, 255, 0.55);
+}
+
+.blackhr{
+    border: none; /* Убираем границу для браузера Firefox */
+    color: black; /* Цвет линии для остальных браузеров */
+    background-color: black; /* Цвет линии для браузера Firefox и Opera */
+    height: 1px; /* Толщина линии */
+}

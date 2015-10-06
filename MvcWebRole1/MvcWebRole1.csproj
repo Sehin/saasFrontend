@@ -206,14 +206,13 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\ClientsController.cs" />
     <Compile Include="Controllers\ContentObserveController.cs" />
     <Compile Include="Controllers\ContentViewController.cs" />
     <Compile Include="Controllers\FacebookController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\SAccManagerController.cs" />
     <Compile Include="Controllers\SocialController.cs" />
     <Compile Include="Controllers\SocialStudioController.cs" />
+    <Compile Include="Controllers\ToolController.cs" />
     <Compile Include="Controllers\TwitterController.cs" />
     <Compile Include="Controllers\VkontakteController.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
@@ -267,6 +266,8 @@
     <Content Include="Content\css\bootstrap.css" />
     <Content Include="Content\css\bootstrap.min.css" />
     <Content Include="Content\css\font-awesome.min.css" />
+    <Content Include="Content\css\ihover.css" />
+    <Content Include="Content\css\ihover.min.css" />
     <Content Include="Content\css\style.css" />
     <Content Include="Content\fonts\flexslider-icon.svg" />
     <Content Include="Content\fonts\fontawesome-webfont.svg" />
@@ -451,21 +452,19 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_ToolLayout.cshtml" />
-    <Content Include="Views\SAccManager\AddGroupPartial.cshtml" />
-    <Content Include="Views\SAccManager\GetGroupsPartial.cshtml" />
-    <Content Include="Views\SAccManager\GetFbSocInfoPartial.cshtml" />
-    <Content Include="Views\SAccManager\Index.cshtml" />
     <Content Include="Views\ContentView\Index.cshtml" />
     <Content Include="Views\ContentView\ContentPanelPartial.cshtml" />
     <Content Include="Views\ContentObserve\Index.cshtml" />
     <Content Include="Views\ContentObserve\FilterTagsPartial.cshtml" />
     <Content Include="Views\ContentObserve\LoadContentPartial.cshtml" />
-    <Content Include="Views\SAccManager\GetVkSocInfoPartial.cshtml" />
     <Content Include="Views\SocialStudio\Index.cshtml" />
     <Content Include="Views\SocialStudio\Layout.cshtml" />
     <Content Include="Views\SocialStudio\VkGroupPartial.cshtml" />
     <Content Include="Views\Twitter\AuthorizeCallback.cshtml" />
     <Content Include="Views\Home\Index1.cshtml" />
+    <Content Include="Views\Tool\Index.cshtml" />
+    <Content Include="Views\Tool\_Layout.cshtml" />
+    <Content Include="Views\Tool\SocStudio.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

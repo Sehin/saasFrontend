@@ -132,6 +132,24 @@ hr.small {
     transform: translate3d(0, 100%, 0);
   }
 }
+
+.tool-header
+{
+  background-color: #808080;
+  background: no-repeat center center;
+  background-attachment: scroll;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
+  margin-bottom: 0px;
+  padding:30px 0 30px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+
+
+
 .intro-header {
   background-color: #808080;
   background: no-repeat center center;
