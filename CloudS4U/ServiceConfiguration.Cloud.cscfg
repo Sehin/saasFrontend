@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ServiceConfiguration serviceName="CloudS4U" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="2" osVersion="*" schemaVersion="2015-04.2.6">
+  <Role name="MvcWebRole1">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=cloudmarketingtool;AccountKey=Mzn6FlEcY8ClkEjZ8yR++Hck+HI9iGLhsT9RRsJ8fnA4soczL29RkM4A+wGF0Ey2nd/Z+TykpAzSuW1DZzY0vw==" />
+    </ConfigurationSettings>
+  </Role>
+  <Role name="WorkerRole1">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=cloudmarketingtool;AccountKey=Mzn6FlEcY8ClkEjZ8yR++Hck+HI9iGLhsT9RRsJ8fnA4soczL29RkM4A+wGF0Ey2nd/Z+TykpAzSuW1DZzY0vw==" />
+    </ConfigurationSettings>
+  </Role>
+</ServiceConfiguration>

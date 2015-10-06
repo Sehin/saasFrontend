@@ -1,0 +1,38 @@
+﻿@model List<ContentView>
+@using MvcWebRole1.Models;
+
+@{
+    foreach (ContentView cw in Model)
+    {
+        <div class="well col-md-12" id="contentBody">
+            <div class="col-md-2 well well-padding">
+                @if (cw.contentData.Length > 0)
+                {
+                    <img class="img-thumbnail center-block" src="@cw.contentData[0].URL" />
+                }
+                else
+                {
+                    <img class="img-thumbnail center-block" src="~/Images/noImage.jpg" />
+                }
+            </div>
+            <div class="col-md-10 well">
+                <h4>@cw.title<small>@cw.text</small></h4>
+                <input id="contentId" type="hidden" value="@cw.id" />
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" id="edit">Редактировать</button>
+                    <button type="button" class="btn btn-danger">Удалить</button>
+                    <button type="button" class="btn btn-default">Публикация</button>
+                    <button type="button" class="btn btn-default">Добавить в маркет. компанию</button>
+                </div>
+                <br />
+                
+                    @foreach(String tag in cw.tags)
+                    { 
+                        <div class="btn btn-primary btn-xs" id="contentTag">@tag</div>
+                    }
+            </div>
+        </div>
+    }
+}
+
+

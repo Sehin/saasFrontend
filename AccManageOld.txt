@@ -1,0 +1,85 @@
+@model IEnumerable<MvcWebRole1.Models.SocAccount>
+@{
+    ViewBag.Title = "Social Account Manage";
+    Layout = "~/Views/Tool/ToolLayout.cshtml";
+}
+<br />
+<h1>Social Account Manage<small>Настройте свои социальные аккаунты</small></h1>
+
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Добавить VK аккаунт</div>
+            <div class="panel-body">
+                <div class="pull-left">
+                    <img class="socIcoVk" src="~/Content/socIco/vk.png" />
+                </div>
+                @using (Html.BeginForm("Auth", "Vkontakte", FormMethod.Post))
+                {
+                    <button type="submit" class="btn btn-primary btn-lg">Добавить<span class="glyphicon glyphicon-plus-sign" /></button>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Добавить FB аккаунт</div>
+            <div class="panel-body">
+                <div class="pull-left">
+                    <img class="socIcoVk" src="~/Content/socIco/facebook.png" />
+                </div>
+                @using (Html.BeginForm("Auth", "Facebook", FormMethod.Post))
+                {
+                    <button type="submit" class="btn btn-primary btn-lg">Добавить<span class="glyphicon glyphicon-plus-sign" /></button>
+                }
+            </div>
+        </div>
+        <!--Перечисление акканутов FB-->
+        @using MvcWebRole1.Models
+        @{
+            IEnumerable<SocAccount> _sa = ViewBag.socAccs;
+            IEnumerable<Group> groups = ViewBag.groups;
+            foreach (SocAccount sa in _sa)
+            {
+                if (sa.SOCNET_TYPE == 0)
+                {
+                    <div class="well">
+                        @{
+                    String url = Html.Action("getUserUrl", "Facebook", new { socId = sa.ID_AC }).ToHtmlString();
+                    String name = Html.Action("getUserName", "Facebook", new { socId = sa.ID_AC }).ToString();
+                    <a href="@url">@name</a> // AccName
+                    <button type="submit" class="btn btn-primary btn-sm pull-right">Удалить аккаунт<span class="glyphicon glyphicon-minus" /></button>
+                            <!--Группы-->
+                            <p>Группы:</p><div id="groups">
+
+    @{ Html.RenderAction("GetGroupsPartial", new { ID_AC = sa.ID_AC}); }
+    @{/*foreach (Group gr in groups)
+    {
+    if (gr.ID_AC == sa.ID_AC)
+    {
+    String g_name = Html.Action("getGroupName", "Facebook", new { group_id = gr.ID_GROUP, socId = sa.ID_AC }).ToString();
+    String g_url = "https://www.facebook.com/groups/" + gr.ID_GROUP;
+    <a href="@g_url">@g_name</a>
+
+    @Html.ActionLink("DeleteGroup", "DeleteGroup", "Social", new { groupID = gr.ID }, null);
+    }
+    }*/}
+                                </div>
+                           <!--Кнопка добавления группы + модаль-->
+                    <br />
+                    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+                        Добавить группу
+                    </button>
+                    using (Html.BeginForm("addGroup", "Social")){ 
+                        <input type="hidden" value="@sa.ID_AC" name="socId" />
+                            @Html.Partial("AddGroupPartial")
+                        }
+                    }
+                    </div>
+                }
+            }
+        }
+
+    </div>
+</div>

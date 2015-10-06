@@ -1,0 +1,21 @@
+﻿@model IEnumerable<ContentView>
+@using MvcWebRole1.Models
+
+
+@{
+    foreach (ContentView cw in Model)
+    {
+            
+                String url = "/ContentView/Index?contentId=" + cw.id;
+                <a href="@url" class="contentUrl">
+                <div class="well-sm">
+                    @if (cw.contentData.Length != 0)
+                    {
+                    <img class="img-rounded img-preview-small" src="@cw.contentData[0].URL" />
+                    }
+                    @cw.title
+                </div>
+                    </a>
+
+}
+}

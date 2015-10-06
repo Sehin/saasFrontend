@@ -1,0 +1,42 @@
+﻿@model int
+@using MvcWebRole1.Models
+@{
+    Layout = "~/Views/SocialStudio/Layout.cshtml";
+    DatabaseContext db = new DatabaseContext();
+    var socAccs = db.SocAccounts.Where(s => s.ID_USER == Model);
+    <table>
+        <tr>
+            @foreach (SocAccount sa in socAccs)
+            {
+                <td width="300">
+                    @if (sa.SOCNET_TYPE==0)
+                    {
+                        var groups = db.Groups.Where(g=>g.ID_AC==sa.ID_AC);
+                        foreach (Group gr in groups)
+                        {
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                            @{Html.RenderPartial("VkGroupPartial", gr);}
+                                    </div>
+                                </div>
+                        }
+                    }
+                    @if (sa.SOCNET_TYPE==1)
+                    {
+                    var groups = db.Groups.Where(g=>g.ID_AC==sa.ID_AC);
+                    foreach (Group gr in groups)
+                    {
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            @{Html.RenderPartial("FBGroupPartial", gr);}
+                        </div>
+                    </div>
+                    }
+                    }
+                </td>
+            }
+        </tr>
+    </table>
+}
+
+    

@@ -1,0 +1,125 @@
+﻿@model ContentView
+@using MvcWebRole1.Models
+@{
+    this.Layout = null;
+    Console.WriteLine("Видно меня?");
+}
+
+<link rel="stylesheet" href="~/Content/css/bootstrap.css" />
+<div class="row">
+    <div class="col-md-2">
+        <div id="contents" class="panelLeft">
+            <br />
+            <h2 class="text-center">Контент</h2>
+            <hr />
+            <a href="/ContentView/"><h4 class="text-center contentUrl">Добавить новый</h4></a>
+            <hr />
+            @{Html.RenderAction("ContentPanelPartial");}
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="mainPanel">
+            <h2 class="text-center">Панель редактирования</h2>
+            <hr />
+            @using (Html.BeginForm("AddContent", "ContentView", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                if (Model!=null)
+                { 
+                <input type="hidden" value="@Model.id" name="ContentId" />
+                }
+            <div class="input-group input-group-lg">
+                <span class="input-group-addon"><small>T</small></span>
+                @if (Model != null)
+                {
+                    <input name="title" type="text" class="form-control" placeholder="Заголовок" value="@Model.title">
+                }
+                else
+                { 
+                <input name="title" type="text" class="form-control" placeholder="Заголовок">
+                }
+            </div>
+            <br />
+                if (Model != null)
+                {
+            <textarea name="text" class="form-control" rows="3" placeholder="Текст">@Model.text</textarea>
+                }
+                else
+                {
+                <textarea name="text" class="form-control" rows="3" placeholder="Текст"></textarea>
+                }
+            
+            <!--Тут теги-->
+                if (Model != null)
+                {
+                    String tags = "";
+                    for (int i = 0; i < Model.tags.Length; i++)
+                    {
+                        if (i != Model.tags.Length - 1)
+                        {
+                            tags += Model.tags[i] + ",";
+                        }
+                        else
+                        {
+                            tags += Model.tags[i];
+                        }
+
+                    }
+                    <input name="tags" type="text" class="form-control" placeholder="Введите теги через запятую" value="@tags"/>
+                }
+                else
+                {
+            <input name="tags" type="text" class="form-control" placeholder="Введите теги через запятую" />  
+                }  
+            <!--Тут все фотографии к контенту-->
+                if (Model != null)
+                {
+                <div class="row">
+                    @foreach (ContentData cd in Model.contentData)
+                    {
+                    
+                    <div class="well col-md-4">
+                        <img src="@cd.URL" class="img-thumbnail img-preview" />
+                        @Html.ActionLink("Удалить", "DeleteImage", new { contentId = cd.ID_CD })
+                    </div>
+                    }
+                </div>
+                }
+            
+            <p>Добавить фотографии:</p>
+
+            <input type="file" accept="image/jpeg,image/png" multiple name="fileBase" />
+            if(Model!=null)
+            { 
+            <input class="btn btn-success pull-left" type="submit" value="Сохранить контент" />
+            }
+            else
+            {
+            <input class="btn btn-success pull-left" type="submit" value="Добавить новый контент" />
+            }
+            }
+            <br />
+            @if(Model!=null)
+            {
+                using (Html.BeginForm("DeleteContent", "ContentView", new { idContent = Model.id }))
+                {
+                
+            <input class="btn btn-danger pull-left" type="submit" value="Удалить контент" />
+                
+                }
+            }
+            <br /><br />
+
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="panelRight">
+            <br />
+            <h2 class="text-center">Маркетинг</h2>
+            <hr />
+            Тут все по маркетингу
+        </div>
+    </div>
+
+</div>

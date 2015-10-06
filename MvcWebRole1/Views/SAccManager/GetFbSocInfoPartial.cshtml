@@ -1,0 +1,35 @@
+﻿@model IEnumerable<MvcWebRole1.Models.SocAccount>
+
+@using MvcWebRole1.Models;
+@{
+    int i = 0;
+    foreach (SocAccount sa in Model)
+    {
+        String socDivName = "soc" + i;
+        <div id="@socDivName">
+            @{
+                <div class="well">
+                    @{
+        String url = Html.Action("getUserUrl", "Facebook", new { socId = sa.ID_AC }).ToHtmlString();
+        String name = Html.Action("getUserName", "Facebook", new { socId = sa.ID_AC }).ToString();
+        String divName = "soc" + ViewBag.divNum;
+        <a href="@url">@name</a> // AccName
+        <input type="button" id="myButton" value="Удалить аккаунт" />
+                        <br />
+        String divGrName = "groups" + sa.ID_AC;
+        <div id="@divGrName">
+            @{Html.RenderAction("GetGroupsPartial", new { ID_AC = sa.ID_AC });}
+        </div>
+                        <br />
+                        <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+                            Добавить группу
+                        </button>
+        Html.RenderAction("AddGroupPartial", new { ID_AC = sa.ID_AC });
+                    }
+                </div>
+            }
+        </div>
+        i++;
+    } // end foreach
+}
+

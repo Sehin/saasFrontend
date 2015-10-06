@@ -1,0 +1,73 @@
+﻿@{
+    Layout = null;
+}
+<html>
+<body>
+    @Scripts.Render("~/Scripts/jquery-1.11.3.min.js")
+    <link rel="stylesheet" href="~/Content/css/bootstrap.css" />
+
+    <div class="col-md-3">
+        <h2 class="text-center">Фильтры</h2>
+        <hr />
+            <ul class="nav nav-pills">
+                <li class="active">@Ajax.ActionLink("Тип", "BestBook", new AjaxOptions { UpdateTargetId = "filters" })</li>
+                <li>@Ajax.ActionLink("Маркетинг компании", "BestBook", new AjaxOptions { UpdateTargetId = "filters" })</li>
+                <li id="tags"><a>Теги</a></li>
+
+            </ul>
+        <hr />
+        <div id="filters">
+            <div id="loading"><img src="~/Images/Loading.gif" /></div>    
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <h2 class="text-center">Контент</h2>
+        <hr />
+        <div id="contents"></div>
+    </div>
+</body>
+</html>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#loading').hide();
+        $('#tags').click(function (e) {
+            $('#loading').show();
+            $('li.active').removeClass("active");
+            $(this).addClass("active");
+            $('#filters').load("/ContentObserve/FilterTagsPartial", function () {
+                $('#loading').hide();
+                afterTagLoad();
+            });
+        });
+
+        function afterTagLoad()
+        {
+            
+            $('div#tag').click(function () {
+                var value = $(this).text();
+                $('#contents').load("/ContentObserve/LoadContentPartial?tag=" + value, function () {
+                    afterContentLoad();
+                });
+            });
+        }
+
+        function afterContentLoad() {
+            
+            $('div#contentTag').click(function () {
+                var value = $(this).text();
+                $('#contents').load("/ContentObserve/LoadContentPartial?tag=" + value, function () {
+                    afterContentLoad();
+                });
+            });
+            $('button#edit').click(function () {
+                var value = $(this).parent().siblings('input#contentId').val();
+                $(location).attr('href', 'http://saas4us.azurewebsites.net/ContentView/Index?contentId=' + value);
+            });
+        }
+
+    });
+    
+</script>
