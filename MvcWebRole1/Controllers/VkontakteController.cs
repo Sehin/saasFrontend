@@ -71,11 +71,11 @@ namespace MvcWebRole1.Controllers
             SocAccount socAcc = new SocAccount(0, VkToken, user.Id);
             db.SocAccounts.Add(socAcc);
             db.SaveChanges();
-          /*  if (user != null)
-            {
-                db.Entry(socAcc).State = EntityState.Modified;
-                db.SaveChanges();
-            }         */
+            /*  if (user != null)
+              {
+                  db.Entry(socAcc).State = EntityState.Modified;
+                  db.SaveChanges();
+              }         */
             return RedirectPermanent("~/Tool/SocStudio/");
         }
 
@@ -99,7 +99,7 @@ namespace MvcWebRole1.Controllers
             JToken jtoken_s = obj["response"].First["last_name"];
             return jtoken_f.ToString() + " " + jtoken_s.ToString();
         }
-    
+
         public RedirectResult Delete()
         {
             int userId = getUserId();
@@ -111,7 +111,7 @@ namespace MvcWebRole1.Controllers
         public RedirectResult addGroup(string groupId)
         {
             int userId = getUserId();
-            int accId = db.SocAccounts.Where(s => s.ID_USER == userId && s.SOCNET_TYPE == 0).Select(s=>s.ID_AC).Single();
+            int accId = db.SocAccounts.Where(s => s.ID_USER == userId && s.SOCNET_TYPE == 0).Select(s => s.ID_AC).Single();
             Group group = new Group(groupId, accId);
             db.Groups.Add(group);
             db.SaveChanges();
@@ -129,7 +129,7 @@ namespace MvcWebRole1.Controllers
             string login = HttpContext.User.Identity.Name;
             return db.Users.Where(u => u.Email == login).FirstOrDefault().Id;
         }
-    
+
         public void testIt()
         {
             VKWorker.getNewsfeed();
@@ -139,21 +139,21 @@ namespace MvcWebRole1.Controllers
     {
         public static List<int> getGroupSubscribersIds(int groupId)
         {
-             WebClient wc = new WebClient();
-             wc.Encoding = Encoding.UTF8;
-             String answer = wc.DownloadString("https://api.vk.com/method/groups.getMembers?group_id=" + groupId);
-             JObject obj = JObject.Parse(answer);
-             JToken jtoken = obj["response"]["users"].First;
+            WebClient wc = new WebClient();
+            wc.Encoding = Encoding.UTF8;
+            String answer = wc.DownloadString("https://api.vk.com/method/groups.getMembers?group_id=" + groupId);
+            JObject obj = JObject.Parse(answer);
+            JToken jtoken = obj["response"]["users"].First;
 
-             List<int> ids = new List<int>();
-             do
-             {
-                 ids.Add((int)jtoken);
-                 jtoken = jtoken.Next;
-             }
-             while (jtoken != null);
+            List<int> ids = new List<int>();
+            do
+            {
+                ids.Add((int)jtoken);
+                jtoken = jtoken.Next;
+            }
+            while (jtoken != null);
 
-             return ids;
+            return ids;
         }
         public static String GetSocAccName(string token)
         {
@@ -202,14 +202,14 @@ namespace MvcWebRole1.Controllers
             JToken jtoken = obj["response"].First["photo_50"];
             return jtoken.ToString();
         }
-        public static Tuple<String,String, String> getCommentData(ClientComment cc)
+        public static Tuple<String, String, String> getCommentData(ClientComment cc)
         {
             DatabaseContext db = new DatabaseContext();
             int ID_GROUP = db.ContentsInGroups.Join(db.ClientComments,
                 c => c.ID_CIG,
                 q => q.ID_CIG,
                 (c, q) => new { c, q }).Select(w => w.c.ID_GROUP).First();
-            String VK_ID_GR = db.Groups.Where(g=>g.ID==ID_GROUP).Select(w=>w.ID_GROUP).Single();
+            String VK_ID_GR = db.Groups.Where(g => g.ID == ID_GROUP).Select(w => w.ID_GROUP).Single();
 
             int ID_POST = db.ContentsInGroups.Where(c => c.ID_CIG == cc.ID_CIG).Select(c => c.ID_POST).Single();
 
@@ -237,7 +237,7 @@ namespace MvcWebRole1.Controllers
             WebClient wc = new WebClient();
             wc.Encoding = Encoding.UTF8;
             DatabaseContext db = new DatabaseContext();
-            int idAcc = db.SocAccounts.Where(s => s.ID_USER == userId && s.SOCNET_TYPE == 0).Select(s=>s.ID_AC).Single();
+            int idAcc = db.SocAccounts.Where(s => s.ID_USER == userId && s.SOCNET_TYPE == 0).Select(s => s.ID_AC).Single();
             var admGroups = db.Groups.Where(g => g.ID_AC == idAcc).Select(g => g.ID_GROUP).ToList();
 
 
@@ -275,12 +275,12 @@ namespace MvcWebRole1.Controllers
                 switch (jtoken["type"].ToString())
                 {
                     case "wall_photo":
-
+                        getAttachments(jtoken);
                         break;
                     case "post":
-                        
+                        getAttachments(jtoken);
                         break;
-                }    
+                }
 
 
                 jtoken = jtoken.Next;
@@ -288,34 +288,41 @@ namespace MvcWebRole1.Controllers
             while (jtoken != null);
 
         }
-    
+
 
         private static List<IAttachments> getAttachments(JToken token)
         {
             List<IAttachments> attachments = new List<IAttachments>();
-            try
+            JToken jtoken = token["attachments"].First;
+            do
             {
-                JToken jtoken = token["attachments"].First;
-                do
+                switch (jtoken["type"].ToString())
                 {
-                    switch    
+                    case "photo":
+                        PhotoAttach pa = new PhotoAttach(jtoken["photo"]["owner_id"].ToString(), jtoken["photo"]["pid"].ToString(), jtoken["photo"]["src"].ToString());
+                        attachments.Add(pa);
+                        break;
+                    case "video":
+                        VideoAttach va = new VideoAttach(jtoken["video"]["owner_id"].ToString(), jtoken["video"]["vid"].ToString(), jtoken["video"]["title"].ToString(), jtoken["video"]["description"].ToString());
+                        attachments.Add(va);
+                        break;
                 }
-                while (jtoken != null);
+                jtoken = jtoken.Next;
             }
-            catch (Exception q)
-            {
+            while (jtoken != null);
 
-            }
             return attachments;
         }
     }
     public interface IVKPost
     {
-        public int idFrom { get; set; }
-        public DateTime date { get; set; }
+        int idFrom { get; set; }
+        DateTime date { get; set; }
     }
     public class Post : IVKPost
     {
+        public int idFrom { get; set; }
+        public DateTime date { get; set; }
         public String text { get; set; }
         public List<IAttachments> attach = new List<IAttachments>();
     }
@@ -327,12 +334,29 @@ namespace MvcWebRole1.Controllers
     }
     public class PhotoAttach : IAttachments
     {
-        String photo_1280_url { get; set; }
+        public String owner_id { get; set; }
+        public String id { get; set; }
+        public String photo_maxSize_url { get; set; }
+        public PhotoAttach(String owner_id, String id, String photo_maxSize_url)
+        {
+            this.owner_id = owner_id;
+            this.id = id;
+            this.photo_maxSize_url = photo_maxSize_url;
+        }
     }
-
     public class VideoAttach : IAttachments
     {
-
+        public String owner_id { get; set; }
+        public String id { get; set; }
+        public String title { get; set; }
+        public String description { get; set; }
+        public VideoAttach(String owner_id, String id, String title, String description)
+        {
+            this.owner_id = owner_id;
+            this.id = id;
+            this.title = title;
+            this.description = description;
+        }
     }
 
 
