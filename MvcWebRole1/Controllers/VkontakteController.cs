@@ -269,13 +269,16 @@ namespace MvcWebRole1.Controllers
             String answer = wc.DownloadString("https://api.vk.com/method/newsfeed.get?access_token=ab6c5b495f5600f464bd18190be6de272deed88ab9dc0771f1925b4668ce7cc0265d6f9480751c580ff5c");
             JObject obj = JObject.Parse(answer);
             JToken jtoken = obj["response"]["items"].First;
-
+            Newsfeed newsfeed = new Newsfeed();
             do
             {
                 switch (jtoken["type"].ToString())
                 {
                     case "wall_photo":
 
+                        break;
+                    case "post":
+                        
                         break;
                 }    
 
@@ -286,13 +289,55 @@ namespace MvcWebRole1.Controllers
 
         }
     
+
+        private static List<IAttachments> getAttachments(JToken token)
+        {
+            List<IAttachments> attachments = new List<IAttachments>();
+            try
+            {
+                JToken jtoken = token["attachments"].First;
+                do
+                {
+                    switch    
+                }
+                while (jtoken != null);
+            }
+            catch (Exception q)
+            {
+
+            }
+            return attachments;
+        }
     }
     public interface IVKPost
     {
-        int idFrom { get; set; }
+        public int idFrom { get; set; }
+        public DateTime date { get; set; }
     }
-    public class Post
+    public class Post : IVKPost
     {
-        public int idFrom;
+        public String text { get; set; }
+        public List<IAttachments> attach = new List<IAttachments>();
+    }
+
+    public interface IAttachments
+    {
+        String owner_id { get; set; }
+        String id { get; set; }
+    }
+    public class PhotoAttach : IAttachments
+    {
+        String photo_1280_url { get; set; }
+    }
+
+    public class VideoAttach : IAttachments
+    {
+
+    }
+
+
+    public class Newsfeed
+    {
+        public List<IVKPost> feed = new List<IVKPost>();
     }
 }
