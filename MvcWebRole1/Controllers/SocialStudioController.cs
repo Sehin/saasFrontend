@@ -17,6 +17,10 @@ namespace MvcWebRole1.Controllers
         {           
             return View(getUserId());
         }
+        public PartialViewResult VkPartial(List<Group> groups)
+        {
+            return PartialView(groups);
+        }
         public List<ClientComment> getSocialCommentsFromGroup(int ID_GROUP)
         {
             List<ClientComment> ccs = (List<ClientComment>)db.ClientComments

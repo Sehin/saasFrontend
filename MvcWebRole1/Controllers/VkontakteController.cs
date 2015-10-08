@@ -26,6 +26,7 @@ namespace MvcWebRole1.Controllers
         String client_secret = "7LCpt00ZrUCThUwyyYum";
         String api_version = "5.33";
         String[] scopeParams;
+        DatabaseContext db = new DatabaseContext();
 
         public RedirectResult Auth()
         {
@@ -53,9 +54,9 @@ namespace MvcWebRole1.Controllers
             return new RedirectResult("https://oauth.vk.com/authorize?client_id=" + client_id + "&scope=" + scopeParamsString + "&response_type=code");
         }
 
-        public RedirectResult getToken(String code)
+        public RedirectResult getToken(String url)
         {
-            Console.WriteLine("getTokenMethod");
+            String code = url.Split('=')[1];
             WebClient wc = new WebClient();
             wc.Encoding = Encoding.UTF8;
             String test = "https://oauth.vk.com/access_token?client_id=" + client_id + "&client_secret=" + client_secret + "&code=" + code + "&redirect_uri=" + redirect_uri;
@@ -67,15 +68,15 @@ namespace MvcWebRole1.Controllers
 
             string login = HttpContext.User.Identity.Name;
             User user = db.Users.Where(u => u.Email == login).FirstOrDefault();
-            SocAccount socAcc = db.SocAccounts.Where(u => u.ID_USER == user.Id).FirstOrDefault();
-            socAcc.SOCNET_TYPE = 0;
-            socAcc.TOKEN = VkToken;
-            if (user != null)
+            SocAccount socAcc = new SocAccount(0, VkToken, user.Id);
+            db.SocAccounts.Add(socAcc);
+            db.SaveChanges();
+          /*  if (user != null)
             {
                 db.Entry(socAcc).State = EntityState.Modified;
                 db.SaveChanges();
-            }         
-            return RedirectPermanent("~/Tool/Social/");
+            }         */
+            return RedirectPermanent("~/Tool/SocStudio/");
         }
 
         public String GetSocAccProfileImg(string token)
@@ -97,6 +98,41 @@ namespace MvcWebRole1.Controllers
             JToken jtoken_f = obj["response"].First["first_name"];
             JToken jtoken_s = obj["response"].First["last_name"];
             return jtoken_f.ToString() + " " + jtoken_s.ToString();
+        }
+    
+        public RedirectResult Delete()
+        {
+            int userId = getUserId();
+            SocAccount sa = db.SocAccounts.Where(s => s.ID_USER == userId && s.SOCNET_TYPE == 0).Single();
+            db.SocAccounts.Remove(sa);
+            db.SaveChanges();
+            return Redirect("/Tool/SocStudio");
+        }
+        public RedirectResult addGroup(string groupId)
+        {
+            int userId = getUserId();
+            int accId = db.SocAccounts.Where(s => s.ID_USER == userId && s.SOCNET_TYPE == 0).Select(s=>s.ID_AC).Single();
+            Group group = new Group(groupId, accId);
+            db.Groups.Add(group);
+            db.SaveChanges();
+            return Redirect("/Tool/SocStudio");
+        }
+        public RedirectResult deleteGroup(int groupId)
+        {
+            var group = db.Groups.Where(g => g.ID == groupId).Single();
+            db.Groups.Remove(group);
+            db.SaveChanges();
+            return Redirect("/Tool/SocStudio");
+        }
+        private int getUserId()
+        {
+            string login = HttpContext.User.Identity.Name;
+            return db.Users.Where(u => u.Email == login).FirstOrDefault().Id;
+        }
+    
+        public void testIt()
+        {
+            VKWorker.getNewsfeed();
         }
     }
     public static class VKWorker
@@ -134,6 +170,15 @@ namespace MvcWebRole1.Controllers
             WebClient wc = new WebClient();
             wc.Encoding = Encoding.UTF8;
             String answer = wc.DownloadString("https://api.vk.com/method/groups.getById?group_id=" + gr.ID_GROUP);
+            JObject obj = JObject.Parse(answer);
+            JToken jtoken = obj["response"].First["name"];
+            return jtoken.ToString();
+        }
+        public static String getGroupNameById(String id)
+        {
+            WebClient wc = new WebClient();
+            wc.Encoding = Encoding.UTF8;
+            String answer = wc.DownloadString("https://api.vk.com/method/groups.getById?group_id=" + id);
             JObject obj = JObject.Parse(answer);
             JToken jtoken = obj["response"].First["name"];
             return jtoken.ToString();
@@ -187,5 +232,67 @@ namespace MvcWebRole1.Controllers
 
             return new Tuple<string, string, string>(photoUrl, clientName, text);
         }
+        public static List<Tuple<String, String>> getAdmGroups(int userId)
+        {
+            WebClient wc = new WebClient();
+            wc.Encoding = Encoding.UTF8;
+            DatabaseContext db = new DatabaseContext();
+            int idAcc = db.SocAccounts.Where(s => s.ID_USER == userId && s.SOCNET_TYPE == 0).Select(s=>s.ID_AC).Single();
+            var admGroups = db.Groups.Where(g => g.ID_AC == idAcc).Select(g => g.ID_GROUP).ToList();
+
+
+            String token = db.SocAccounts.Where(s => s.ID_USER == userId && s.SOCNET_TYPE == 0).Select(s => s.TOKEN).Single();
+            String answer = wc.DownloadString("https://api.vk.com/method/groups.get?filter=admin&access_token=" + token);
+            JObject obj = JObject.Parse(answer);
+            JToken jtoken = obj["response"].First;
+            List<String> ids = new List<String>();
+            do
+            {
+                ids.Add((String)jtoken);
+                jtoken = jtoken.Next;
+            }
+            while (jtoken != null);
+            List<Tuple<String, String>> groups = new List<Tuple<String, string>>();
+            foreach (String id in ids)
+            {
+                if (!admGroups.Contains(id))
+                    groups.Add(new Tuple<String, string>(id, getGroupNameById(id)));
+            }
+            return groups;
+        }
+        public static void getNewsfeed(/*SocAccount sa*/)
+        {
+            WebClient wc = new WebClient();
+            wc.Encoding = Encoding.UTF8;
+
+            //String answer = wc.DownloadString("https://api.vk.com/method/newsfeed.get?access_token=" + sa.TOKEN);
+            String answer = wc.DownloadString("https://api.vk.com/method/newsfeed.get?access_token=ab6c5b495f5600f464bd18190be6de272deed88ab9dc0771f1925b4668ce7cc0265d6f9480751c580ff5c");
+            JObject obj = JObject.Parse(answer);
+            JToken jtoken = obj["response"]["items"].First;
+
+            do
+            {
+                switch (jtoken["type"].ToString())
+                {
+                    case "wall_photo":
+
+                        break;
+                }    
+
+
+                jtoken = jtoken.Next;
+            }
+            while (jtoken != null);
+
+        }
+    
+    }
+    public interface IVKPost
+    {
+        int idFrom { get; set; }
+    }
+    public class Post
+    {
+        public int idFrom;
     }
 }

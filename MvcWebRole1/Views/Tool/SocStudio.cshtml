@@ -1,6 +1,45 @@
-﻿@{
+﻿@model int
+@using MvcWebRole1.Models;
+@using MvcWebRole1.Controllers;
+
+@{
     ViewBag.Title = "SocStudio";
     Layout = "~/Views/Tool/_Layout.cshtml";
+    DatabaseContext db = new DatabaseContext();
+    int userId = Model;
+    //VK
+    SocAccount vkSA;
+    try
+    {
+        vkSA = db.SocAccounts.Where(s => s.ID_USER == userId && s.SOCNET_TYPE == 0).Single();
+    }
+    catch (Exception e)
+    {
+        vkSA = null;
+    }
+    //FB
+    SocAccount fbSA;
+    try
+    {
+        fbSA = db.SocAccounts.Where(s => s.ID_USER == userId && s.SOCNET_TYPE == 1).Single();
+    }
+    catch (Exception e)
+    {
+        fbSA = null;
+    }
+    //TW
+    SocAccount twSA;
+    try
+    {
+        twSA = db.SocAccounts.Where(s => s.ID_USER == userId && s.SOCNET_TYPE == 2).Single();
+    }
+    catch (Exception e)
+    {
+        twSA = null;
+    }
+
+
+
 }
 
 <div class="container">
@@ -9,23 +48,165 @@
         <div class="col-md-4 ss-container">
             <h2 class="center-block">Vkontakte</h2>
             <hr class="blackhr" />
+            @{
+                if (vkSA == null)
+                {
+            <input type="submit" class="btn btn-success center-block" data-toggle="modal" data-target="#VKLoginModal" value="Добавить аккаунт" />
+                }
+                else
+                {
+            <input type="image" src="~/Content/img/icons/gear-icon.png" class="gear-button" data-toggle="modal" data-target="#VKDeleteModal" />
+            <input type="image" src="~/Content/img/icons/add-icon.png" class="add-button" data-toggle="modal" data-target="#VKAddGroupModal" />
 
-            <input type="submit" class="btn btn-success center-block" value="Добавить аккаунт" />
+                    var vkGroups = db.Groups.Where(g => g.ID_AC == vkSA.ID_AC).ToList();
+                    Html.RenderPartial("vkGroupPartial", vkGroups);
+
+                    // Начинка для VK
+
+                }
+}
 
         </div>
         <!--Facebook-->
         <div class="col-md-4 ss-container">
             <h2 class="center-block">Facebook</h2>
             <hr class="blackhr" />
-
+            @{
+                if (fbSA == null)
+                {
+            <input type="submit" class="btn btn-success center-block" value="Добавить аккаунт" />
+                }
+                else
+                {
+            <a href="#"><img src="~/Content/img/icons/gear-icon.png" class="gear-button" /></a>
+            <a href="#"><img src="~/Content/img/icons/add-icon.png" class="add-button" /></a>
+                    // Начинка для FB
+                }
+            }
         </div>
         <!--Twitter-->
         <div class="col-md-4 ss-container">
             <h2 class="center-block">Twitter</h2>
             <hr class="blackhr" />
-
+            @{
+                if (twSA == null)
+                {
+            <input type="submit" class="btn btn-success center-block" value="Добавить аккаунт" />
+                }
+                else
+                {
+            <a href="#"><img src="~/Content/img/icons/gear-icon.png" class="gear-button" /></a>
+            <a href="#"><img src="~/Content/img/icons/add-icon.png" class="add-button" /></a>
+                    // Начинка для VK
+                }
+            }
 
 
         </div>
     </div>
 </div>
+
+<!--Modal for vk login-->
+<div class="modal fade" id="VKLoginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Добавить аккаунт ВКонтакте</h4>
+            </div>
+            <div class="modal-body">
+                После нажатия на кнопку "Войти" вы попадете на страницу авторизации.
+                <br />
+                Когда увидите вот такой текст:
+                <p>
+                    <i>
+                        Пожалуйста, не копируйте данные из адресной строки для сторонних сайтов. Таким образом Вы можете потерять доступ к Вашему аккаунту.
+                    </i>
+                </p>
+                <b>Сделайте именно это.</b>
+                <br />
+                Скопируйте всю строчку из адресной строки, вернитесь назад, и вставте ее в строку ниже. После чего нажмите на кнопку добавить аккаунт.
+
+                @using (Html.BeginForm("Auth", "Vkontakte"))
+                {
+                <input type="submit" class="btn btn-success center-block" value="Войти" />
+                }
+                <br />
+                @using (Html.BeginForm("getToken", "Vkontakte"))
+                {
+                <input type="text" class="form-control" placeholder="Содержимое адресной строки" name="url" />
+                <input type="submit" class="btn btn-success center-block" value="Добавить аккаунт" />
+                }
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal for vk delete-->
+<div class="modal fade" id="VKDeleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Удалить аккаунт ВКонтакте</h4>
+            </div>
+            <div class="modal-body">
+                Вы <b>уверены</b>, что хотите удалить Ваш аккаунт ВКонтакте из нашей системы?
+                <br />
+                Это приведет к удалению <b>всего</b>, что было с ним связано.
+                <br /><br />
+
+                @using (Html.BeginForm("Delete", "Vkontakte"))
+                {
+                <input type="submit" class="btn btn-danger center-block" value="Удалить" />
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal for vk addGroup-->
+<div class="modal fade" id="VKAddGroupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Добавить группу</h4>
+            </div>
+            <div class="modal-body">
+                Выберите группу, которую вы <b>администрируете</b>, из списка:
+
+                @{
+                    List<Tuple<String, String>> groups = VKWorker.getAdmGroups(userId);
+                }
+                @using (Html.BeginForm("addGroup", "Vkontakte"))
+                {
+                    <select name="groupId" class="center-block">
+                        @{
+                    foreach (Tuple<String, String> tpl in groups)
+                    {
+                        <option value="@tpl.Item1">@tpl.Item2</option>
+                    }
+                        }
+                    </select>
+                    <br />
+                    <input type="submit" class="btn btn-danger center-block" value="Добавить группу" />
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+</script>

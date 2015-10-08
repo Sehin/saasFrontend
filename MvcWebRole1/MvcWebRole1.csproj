@@ -277,6 +277,8 @@
     <Content Include="Content\img\home\home-bg.jpg" />
     <Content Include="Content\img\home\post-bg.jpg" />
     <Content Include="Content\img\home\post-sample-image.jpg" />
+    <Content Include="Content\img\icons\add-icon.png" />
+    <Content Include="Content\img\icons\gear-icon.png" />
     <Content Include="Content\socIco\delicious.png" />
     <Content Include="Content\socIco\facebook.png" />
     <Content Include="Content\socIco\facebook_2.png" />
@@ -389,7 +391,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <None Include="Properties\PublishProfiles\saasforus.pubxml" />
+    <None Include="Properties\PublishProfiles\saas4us.pubxml" />
     <None Include="Scripts\jquery-1.9.0.intellisense.js" />
     <Content Include="Scripts\jquery-1.9.0.js" />
     <Content Include="Scripts\jquery-1.9.0.min.js" />
@@ -459,12 +461,14 @@
     <Content Include="Views\ContentObserve\LoadContentPartial.cshtml" />
     <Content Include="Views\SocialStudio\Index.cshtml" />
     <Content Include="Views\SocialStudio\Layout.cshtml" />
-    <Content Include="Views\SocialStudio\VkGroupPartial.cshtml" />
+    <Content Include="Views\SocialStudio\VkPartial.cshtml" />
     <Content Include="Views\Twitter\AuthorizeCallback.cshtml" />
     <Content Include="Views\Home\Index1.cshtml" />
     <Content Include="Views\Tool\Index.cshtml" />
     <Content Include="Views\Tool\_Layout.cshtml" />
     <Content Include="Views\Tool\SocStudio.cshtml" />
+    <Content Include="Views\Tool\VkPartial.cshtml" />
+    <Content Include="Views\Tool\VkGroupPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -475,6 +479,7 @@
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MvcWebRole1.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,6 +12,7 @@ namespace MvcWebRole1.Controllers
         //
         // GET: /Tool/
 
+        DatabaseContext db = new DatabaseContext();
         public ActionResult Index()
         {
             return View();
@@ -18,7 +20,22 @@ namespace MvcWebRole1.Controllers
 
         public ActionResult SocStudio()
         {
-            return View();
+            return View(getUserId());
+        }
+
+        public PartialViewResult VkPartial(List<Group> gr)
+        {
+            return PartialView(gr);
+        }
+        public PartialViewResult VkGroupPartial(Group gr)
+        {
+            return PartialView(gr);
+        }
+
+        public int getUserId()
+        {
+            string login = HttpContext.User.Identity.Name;
+            return db.Users.Where(u => u.Email == login).FirstOrDefault().Id;
         }
     }
 }

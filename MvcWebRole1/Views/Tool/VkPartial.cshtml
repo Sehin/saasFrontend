@@ -1,0 +1,27 @@
+﻿@model List<MvcWebRole1.Models.Group>
+@using MvcWebRole1.Controllers
+@using MvcWebRole1.Models
+
+
+
+<select name="vkGroup">
+    @{
+        foreach (var group in Model)
+        {
+            <option value="@group.ID">@VKWorker.getGroupName(group)</option>
+        }
+    }
+</select>
+
+<div id="content">
+
+
+</div>
+
+
+
+
+
+
+
+

@@ -40,4 +40,57 @@ display:block; text-align:center; margin:0 auto;
     color: black; /* Цвет линии для остальных браузеров */
     background-color: black; /* Цвет линии для браузера Firefox и Opera */
     height: 1px; /* Толщина линии */
+    margin: 15px 0 0 0;
+}
+
+.gear-button{
+    position:absolute;
+    top:5px;
+    left:10px;
+    width:50px;
+    height:50px;
+}
+.gear-button-group{
+    position:absolute;
+    right: 15px;
+    width:50px;
+    height:50px;
+}
+.add-button{
+    position:absolute;
+    top:10px;
+    right:10px;
+    width:40px;
+    height:40px;
+}
+.gear-button:hover, .add-button:hover, .gear-button-group:hover{
+    transition-duration:0.35s;
+    filter: brightness(0.2);
+    -webkit-filter: brightness(0.2);
+    -moz-filter: brightness(0.2);
+    -o-filter: brightness(0.2);
+    -ms-filter: brightness(0.2);
+    cursor: pointer;
+}
+.gear-button:focus, .add-button:focus, .gear-button-group{
+    outline:none;
+}
+
+
+.ss-container .ss-header
+{
+    padding:0px;
+}
+
+.stat-body
+{
+    font-size:0.75em;
+}
+
+.group-name{
+    position:absolute;
+    padding:10px;
+}
+.group-header{
+    height:55px;
 }
