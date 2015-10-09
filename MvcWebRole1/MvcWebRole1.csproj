@@ -470,6 +470,7 @@
     <Content Include="Views\Tool\VkPartial.cshtml" />
     <Content Include="Views\Tool\VkGroupPartial.cshtml" />
     <Content Include="Views\Vkontakte\Index.cshtml" />
+    <Content Include="Views\Tool\VkFeedPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

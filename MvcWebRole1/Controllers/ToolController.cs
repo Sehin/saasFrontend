@@ -32,6 +32,14 @@ namespace MvcWebRole1.Controllers
             return PartialView(gr);
         }
 
+        public PartialViewResult VkFeedPartial()
+        {
+            int userId = getUserId();
+            SocAccount sa = db.SocAccounts.Where(s => s.ID_USER == userId && s.SOCNET_TYPE == 0).Single();
+            Newsfeed newsfeed = VKWorker.getNewsfeed(sa);
+            return PartialView(newsfeed);
+        }
+
         public int getUserId()
         {
             string login = HttpContext.User.Identity.Name;
