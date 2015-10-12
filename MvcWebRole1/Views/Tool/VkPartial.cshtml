@@ -1,24 +1,91 @@
-﻿@model List<MvcWebRole1.Models.Group>
-@using MvcWebRole1.Controllers
+﻿@using MvcWebRole1.Controllers
 @using MvcWebRole1.Models
 
 
 
-<input type="submit" value="Показать новостную ленту" />
-<select name="vkGroup">
-    <option disabled>Выбрать группу</option>
-    @{
-        foreach (var group in Model)
-        {
-            <option value="@group.ID">@VKWorker.getGroupName(group)</option>
-        }
-    }
-</select>
 
-<div id="content">
+<ul class="nav nav-tabs nav-justified">
+    <li>@Ajax.ActionLink("Лента", "VkFeedPartial", new AjaxOptions { UpdateTargetId = "content" })</li>
+    <li>@Ajax.ActionLink("Группы", "VkGroupsPartial", new AjaxOptions { UpdateTargetId = "content" })</li>
+</ul>
+
+
+<script>
+    $('ul.nav.nav-tabs.nav-justified > li').click(function () {
+        $(this).siblings('li.active').removeClass('active');
+        $(this).addClass('active');
+    });
+</script>
+
+
+<div id="content" style="word-wrap: break-word">
 
 
 </div>
+
+
+
+<!--Modal for vk delete-->
+<div class="modal fade" id="VKDeleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Удалить аккаунт ВКонтакте</h4>
+            </div>
+            <div class="modal-body">
+                Вы <b>уверены</b>, что хотите удалить Ваш аккаунт ВКонтакте из нашей системы?
+                <br />
+                Это приведет к удалению <b>всего</b>, что было с ним связано.
+                <br /><br />
+
+                @using (Html.BeginForm("Delete", "Vkontakte"))
+                {
+                    <input type="submit" class="btn btn-danger center-block" value="Удалить" />
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal for vk addGroup-->
+<div class="modal fade" id="VKAddGroupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Добавить группу</h4>
+            </div>
+            <div class="modal-body">
+                Выберите группу, которую вы <b>администрируете</b>, из списка:
+
+                @{
+                    List<Tuple<String, String>> groups = VKWorker.getAdmGroups();
+                }
+                @using (Html.BeginForm("addGroup", "Vkontakte"))
+                {
+                    <select name="groupId" class="center-block">
+                        @{
+                    foreach (Tuple<String, String> tpl in groups)
+                    {
+                        <option value="@tpl.Item1">@tpl.Item2</option>
+                    }
+                        }
+                    </select>
+                    <br />
+                    <input type="submit" class="btn btn-danger center-block" value="Добавить группу" />
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 

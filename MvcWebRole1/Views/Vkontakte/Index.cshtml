@@ -6,12 +6,19 @@
 
 <html>
 <head>
+    <script src="~/Scripts/jquery-1.11.3.min.js"></script>
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
 </head>
 <body>
     <div>
-        <iframe src="http://vk.com/video-29573241_171341169" width="640" height="360" frameborder="0"></iframe>
+        <img src="https://pp.vk.me/c627520/v627520952/1845e/bRPBibG-kD8.jpg" class="gallery" style="width:200px;height:200px;">
     </div>
 </body>
 </html>
+
+<script>
+    $(".gallery").click(function () {
+        this.style.zoom * 3;
+    })
+</script>

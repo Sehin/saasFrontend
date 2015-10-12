@@ -1,0 +1,19 @@
+﻿@using MvcWebRole1.Models
+@using MvcWebRole1.Controllers
+@model List<IAttachments>
+
+@{
+    // Images
+    foreach(IAttachments attachment in Model)
+    {
+        if(attachment.GetType().Name.Equals("PhotoAttach"))
+        {
+            PhotoAttach pa = (PhotoAttach)attachment;
+            <img class="img-preview-content photo-preview" src="@pa.photo_maxSize_url" />
+        }
+    }
+    
+
+    
+    
+}

@@ -132,7 +132,7 @@ namespace MvcWebRole1.Controllers
 
         public void testIt()
         {
-            VKWorker.getNewsfeed();
+            //VKWorker.getNewsfeed();
         }
     }
     public static class VKWorker
@@ -232,8 +232,9 @@ namespace MvcWebRole1.Controllers
 
             return new Tuple<string, string, string>(photoUrl, clientName, text);
         }
-        public static List<Tuple<String, String>> getAdmGroups(int userId)
+        public static List<Tuple<String, String>> getAdmGroups()
         {
+            int userId = getUserId();
             WebClient wc = new WebClient();
             wc.Encoding = Encoding.UTF8;
             DatabaseContext db = new DatabaseContext();
@@ -349,7 +350,6 @@ namespace MvcWebRole1.Controllers
 
             return newsfeed;
         }
-
         private static List<IAttachments> getPhotoAttachments(JToken token)
         {
             List<IAttachments> attachments = new List<IAttachments>();
@@ -408,6 +408,12 @@ namespace MvcWebRole1.Controllers
 
             return attachments;
         }
+        private static int getUserId()
+        {
+            DatabaseContext db = new DatabaseContext();
+            string login = HttpContext.Current.User.Identity.Name;
+            return db.Users.Where(u => u.Email == login).FirstOrDefault().Id;
+        }
     }
 
     public class Newsfeed
@@ -415,6 +421,45 @@ namespace MvcWebRole1.Controllers
         public List<IVKPost> feed = new List<IVKPost>();
         public List<NFProfile> profiles = new List<NFProfile>();
         public List<NFGroup> groups = new List<NFGroup>();
+
+        public IProfile getProfileById(string id)
+        {
+            long id_ = Int64.Parse(id);
+            if (id_ > 0)
+            {
+                foreach (NFProfile profile in profiles)
+                {
+                    if (profile.id.Equals(id))
+                        return profile;
+                }
+            }
+            else
+            {
+                id_ *= -1;
+                foreach (NFGroup group in groups)
+                {
+                    if (group.id.Equals(id_.ToString()))
+                        return group;
+                }
+            }
+
+
+
+            WebClient wc = new WebClient();
+            wc.Encoding = Encoding.UTF8;
+
+            
+
+            String answer = wc.DownloadString("https://api.vk.com/method/users.get?user_ids=" + id+"&fields=photo_max");
+            JObject obj = JObject.Parse(answer);
+            NFProfile profile_ = new NFProfile();
+            profile_.id = id;
+            profile_.first_name = obj["response"].First["first_name"].ToString();
+            profile_.last_name = obj["response"].First["last_name"].ToString();
+            profile_.photo_url = obj["response"].First["photo_max"].ToString();
+
+            return profile_;
+        }
 
     }
     public interface IVKPost
@@ -507,18 +552,24 @@ namespace MvcWebRole1.Controllers
         public String id { get; set; }
     }
 
-    public class NFProfile
+    public interface IProfile
     {
-        public String id;
-        public String first_name;
-        public String last_name;
-        public String photo_url;
+        String id { get; set; }
+        String photo_url { get; set; }
     }
-    public class NFGroup
+
+    public class NFProfile : IProfile
     {
-        public String id;
-        public String name;
-        public String screen_name;
-        public String photo_url;
+        public String id { get; set; }
+        public String first_name { get; set; }
+        public String last_name { get; set; }
+        public String photo_url { get; set; }
+    }
+    public class NFGroup : IProfile
+    {
+        public String id { get; set; }
+        public String name { get; set; }
+        public String screen_name { get; set; }
+        public String photo_url { get; set; }
     }
 }
