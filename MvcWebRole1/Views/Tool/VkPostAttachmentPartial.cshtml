@@ -4,16 +4,14 @@
 
 @{
     // Images
-    foreach(IAttachments attachment in Model)
-    {
-        if(attachment.GetType().Name.Equals("PhotoAttach"))
+    <div class="vk-image-container">
+        @foreach(IAttachments attachment in Model)
         {
-            PhotoAttach pa = (PhotoAttach)attachment;
-            <img class="img-preview-content photo-preview" src="@pa.photo_maxSize_url" />
+            if(attachment.GetType().Name.Equals("PhotoAttach"))
+            {
+                PhotoAttach pa = (PhotoAttach)attachment;
+                <img class="vk-image" src="@pa.photo_maxSize_url" data-id="@pa.id" data-owner_id="@pa.owner_id" />
+            }
         }
-    }
-    
-
-    
-    
+    </div>
 }

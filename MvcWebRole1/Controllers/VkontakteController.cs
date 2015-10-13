@@ -356,7 +356,7 @@ namespace MvcWebRole1.Controllers
             JToken jtoken = token["photos"].First.Next;
             do
             {
-                PhotoAttach pa = new PhotoAttach(jtoken["owner_id"].ToString(), jtoken["pid"].ToString(), jtoken["src"].ToString());
+                PhotoAttach pa = new PhotoAttach(jtoken["owner_id"].ToString(), jtoken["pid"].ToString(), jtoken["src_big"].ToString());
                 attachments.Add(pa);
                 jtoken = jtoken.Next;
             }
@@ -390,7 +390,7 @@ namespace MvcWebRole1.Controllers
                 switch (jtoken["type"].ToString())
                 {
                     case "photo":
-                        PhotoAttach pa = new PhotoAttach(jtoken["photo"]["owner_id"].ToString(), jtoken["photo"]["pid"].ToString(), jtoken["photo"]["src"].ToString());
+                        PhotoAttach pa = new PhotoAttach(jtoken["photo"]["owner_id"].ToString(), jtoken["photo"]["pid"].ToString(), jtoken["photo"]["src_big"].ToString());
                         attachments.Add(pa);
                         break;
                     case "video":
@@ -571,5 +571,18 @@ namespace MvcWebRole1.Controllers
         public String name { get; set; }
         public String screen_name { get; set; }
         public String photo_url { get; set; }
+    }
+
+    public class VkImageViewModel
+    {
+        public String id;
+        public String owner_id;
+        public String photo_maxSize_url;
+        public VkImageViewModel(String id, String owner_id, String photo_maxSize_url)
+        {
+            this.id = id;
+            this.owner_id = id;
+            this.photo_maxSize_url = photo_maxSize_url;
+        }
     }
 }

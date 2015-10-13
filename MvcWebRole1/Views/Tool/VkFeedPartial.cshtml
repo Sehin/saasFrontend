@@ -26,6 +26,24 @@
         }
         </div>
     }
-
-
 }
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.vk-image').click(function () {
+            var url_ = "/Tool/VkImageViewPartial"; // the url to the controller
+            var id = $(this).attr('data-id');
+            var owner_id = $(this).attr('data-owner_id');
+            var url = $(this).attr('src');
+
+            $.get(url_ + '?id=' + id + '&owner_id=' + owner_id + '&photo_maxSize_url=' + url, function (data) {
+                $('#image-view').html(data);
+                $('#image-view').modal('show');
+            });
+        });
+    });
+    /*$('.vk-image').click(function () {
+        alert('qweqwe');
+    });*/
+</script>
+

@@ -474,6 +474,7 @@
     <Content Include="Views\Tool\VkGroupsPartial.cshtml" />
     <Content Include="Views\Tool\VkPostPartial.cshtml" />
     <Content Include="Views\Tool\VkPostAttachmentPartial.cshtml" />
+    <Content Include="Views\Tool\VkImageViewPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

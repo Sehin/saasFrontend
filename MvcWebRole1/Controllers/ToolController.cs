@@ -43,6 +43,11 @@ namespace MvcWebRole1.Controllers
         {
             return PartialView(attachment);
         }
+        public PartialViewResult VkImageViewPartial(String id, String owner_id, String photo_maxSize_url)
+        {
+            VKWorker.getImageLikeInfo(id, owner_id);
+            return PartialView(new VkImageViewModel(id,owner_id,photo_maxSize_url));
+        }
         public PartialViewResult VkFeedPartial()
         {
             int userId = getUserId();
