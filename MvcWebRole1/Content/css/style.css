@@ -40,7 +40,7 @@ display:block; text-align:center; margin:0 auto;
     color: black; /* Цвет линии для остальных браузеров */
     background-color: black; /* Цвет линии для браузера Firefox и Opera */
     height: 1px; /* Толщина линии */
-    margin: 15px 0 0 0;
+    margin: 15px 10px 10px 10px;
 }
 
 .gear-button{
@@ -95,3 +95,46 @@ display:block; text-align:center; margin:0 auto;
     height:55px;
 }
 
+.post-photo{
+    height:50px;
+    width:50px;
+    position:relative;
+    cursor: pointer;
+    margin:10px;
+}
+
+.profile-name{
+    display:inline;
+    font-size: 14px;
+    font-weight:800;
+}
+
+.post-time{
+    position:relative;
+    text-align:right;
+    padding:0px 10px;
+    display:inline;
+    font-size: 12px;
+}
+.post{
+    border:solid;
+    border-width:1px;
+    padding:0;
+    margin:10px 0 10px 0;
+    background-color:#d7eaff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.social-list{
+    padding:10px 0;
+
+}
+
+.vk-image{
+    width: 32%;
+    height: auto;
+}
+.vk-image-container{
+    text-align:center;
+    margin-bottom: 10px;
+}

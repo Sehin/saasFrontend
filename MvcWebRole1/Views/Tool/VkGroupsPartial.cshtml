@@ -1,0 +1,21 @@
+﻿@using MvcWebRole1.Models
+@using MvcWebRole1.Controllers
+@model List<Group>
+
+
+@using (Ajax.BeginForm("VkGroupPartial",new AjaxOptions{ UpdateTargetId = "groupPartial"}))
+{ 
+<select name="vkGroup" class="form-control">
+    <option disabled>Выбрать группу</option>
+    @{
+        foreach (var group in Model)
+        {
+            <option value="@group.ID">@VKWorker.getGroupName(group)</option>
+        }
+    }
+</select>
+    <input type="submit" class="btn btn-group-justified" value="Выбрать группу"/>
+}
+<div id="groupPartial">
+
+</div>

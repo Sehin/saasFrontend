@@ -1,0 +1,29 @@
+﻿@using MvcWebRole1.Models
+@using MvcWebRole1.Controllers
+@model IProfile
+
+@{
+    switch (Model.GetType().Name)
+    {
+        case "NFProfile":
+            String url = "http://vk.com/id" + @Model.id;
+            String name = ((NFProfile)Model).first_name + " " + ((NFProfile)Model).last_name;
+            <a href="@url">
+                <img src="@Model.photo_url" class="post-photo" />
+                <div class="profile-name">
+                    @name
+                </div>
+            </a>
+            break;
+        case "NFGroup":
+            url = "http://vk.com/id" + ((NFGroup)Model).screen_name;
+            name = ((NFGroup)Model).name;
+            <a href="@url">
+    <img src="@Model.photo_url" class="post-photo" />
+                <div class="profile-name">
+                    @name
+                </div>
+            </a>
+            break;
+    }
+}

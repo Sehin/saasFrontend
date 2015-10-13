@@ -27,11 +27,27 @@ namespace MvcWebRole1.Controllers
         {
             return PartialView(gr);
         }
-        public PartialViewResult VkGroupPartial(Group gr)
+        public PartialViewResult VkGroupPartial(int vkGroup)
         {
+            Group gr = db.Groups.Find(vkGroup);
             return PartialView(gr);
         }
-
+        public PartialViewResult VkGroupsPartial()
+        {
+            int userId = getUserId();
+            int sa_id = db.SocAccounts.Where(s => s.ID_USER == userId && s.SOCNET_TYPE == 0).Select(s => s.ID_AC).Single();
+            List<Group> groups = db.Groups.Where(g => g.ID_AC == sa_id).ToList();
+            return PartialView(groups);
+        }
+        public PartialViewResult VkPostAttachmentPartial(List<IAttachments> attachment)
+        {
+            return PartialView(attachment);
+        }
+        public PartialViewResult VkImageViewPartial(String id, String owner_id, String photo_maxSize_url)
+        {
+            VKWorker.getImageLikeInfo(id, owner_id);
+            return PartialView(new VkImageViewModel(id,owner_id,photo_maxSize_url));
+        }
         public PartialViewResult VkFeedPartial()
         {
             int userId = getUserId();
@@ -39,7 +55,10 @@ namespace MvcWebRole1.Controllers
             Newsfeed newsfeed = VKWorker.getNewsfeed(sa);
             return PartialView(newsfeed);
         }
-
+        public PartialViewResult VkPostPartial(IProfile profile)
+        {
+            return PartialView(profile);
+        }
         public int getUserId()
         {
             string login = HttpContext.User.Identity.Name;
