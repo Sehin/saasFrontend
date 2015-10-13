@@ -59,7 +59,7 @@
             <input type="image" src="~/Content/img/icons/add-icon.png" class="add-button" data-toggle="modal" data-target="#VKAddGroupModal" />
 
                     var vkGroups = db.Groups.Where(g => g.ID_AC == vkSA.ID_AC).ToList();
-                    Html.RenderPartial("vkGroupPartial", vkGroups);
+                    Html.RenderPartial("VkPartial", vkGroups);
 
                     // Начинка для VK
 

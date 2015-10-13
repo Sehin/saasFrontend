@@ -3,8 +3,20 @@
 @using MvcWebRole1.Models
 
 
+<ul class="nav nav-tabs nav-justified">
+    <li class="active"><input</li>
+    <li><a href="#"><h4>Группы</h4></a></li>
+</ul>
 
-<input type="submit" value="Показать новостную ленту" />
+<script type="text/javascript">
+    $('ul.nav.nav-tabs.nav-justified li').click(function () {
+        $(this).siblings('.active').removeClass('active');
+        $(this).addClass('active');
+    });
+</script>
+
+
+
 <select name="vkGroup">
     <option disabled>Выбрать группу</option>
     @{

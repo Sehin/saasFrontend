@@ -132,7 +132,7 @@ namespace MvcWebRole1.Controllers
 
         public void testIt()
         {
-            VKWorker.getNewsfeed();
+        //    VKWorker.getNewsfeed();
         }
     }
     public static class VKWorker
