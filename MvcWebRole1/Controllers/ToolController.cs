@@ -45,8 +45,10 @@ namespace MvcWebRole1.Controllers
         }
         public PartialViewResult VkImageViewPartial(String id, String owner_id, String photo_maxSize_url)
         {
-            VKWorker.getImageLikeInfo(id, owner_id);
-            return PartialView(new VkImageViewModel(id,owner_id,photo_maxSize_url));
+            int user_id = getUserId();
+            String token = db.SocAccounts.Where(s => s.ID_USER == user_id && s.SOCNET_TYPE == 0).Select(s => s.TOKEN).Single();
+            Tuple<int, bool> likeInfo = VKWorker.getImageLikeInfo(id, owner_id, token);
+            return PartialView(new VkImageViewModel(id,owner_id,photo_maxSize_url,likeInfo.Item1,likeInfo.Item2));
         }
         public PartialViewResult VkFeedPartial()
         {

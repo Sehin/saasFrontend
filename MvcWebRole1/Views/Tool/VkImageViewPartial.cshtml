@@ -7,8 +7,51 @@
             <img src="@Model.photo_maxSize_url">
         </div>
         <div class="modal-footer">
-            <button class="btn btn-inverse" type="submit">Save</button>
+            <h4>Likes : <b id="like-count">@Model.likeCount</b></h4>
+
+            @{
+
+                using (Ajax.BeginForm("imageUnLike", "Vkontakte", new AjaxOptions() { UpdateTargetId = "like-count", OnSuccess = "onUnlikeSuccess" }))
+                {
+                    <input type="hidden" value="@Model.id" name="id" />
+                    <input type="hidden" value="@Model.owner_id" name="owner_id" />
+                    <button class="btn btn-inverse hidden" type="submit" id="unlike-btn">Unlike :(</button>
+                }
+
+
+                using (Ajax.BeginForm("imageLike", "Vkontakte", new AjaxOptions() { UpdateTargetId = "like-count", OnSuccess = "onLikeSuccess" }))
+                {
+                        <input type="hidden" value="@Model.id" name="id" />
+                        <input type="hidden" value="@Model.owner_id" name="owner_id" />
+                        <button class="btn btn-inverse hidden" type="submit" id="like-btn">Like!</button>
+                    }
+
+}
         </div>
     </div>
 </div>
 
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        if(@Model.isLiked.ToString().ToLower()==true)
+        {
+            $('#like-btn').addClass('hidden')
+            $('#unlike-btn').removeClass('hidden')
+        }
+        else
+        {
+            $('#unlike-btn').addClass('hidden');
+            $('#like-btn').removeClass('hidden');
+        }
+    });
+
+    function onLikeSuccess() {
+        $('#like-btn').addClass('hidden');
+        $('#unlike-btn').removeClass('hidden');
+    }
+    function onUnlikeSuccess() {
+        $('#unlike-btn').addClass('hidden');
+        $('#like-btn').removeClass('hidden');
+    }
+</script>
