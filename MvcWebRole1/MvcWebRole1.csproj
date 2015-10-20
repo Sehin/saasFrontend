@@ -279,6 +279,7 @@
     <Content Include="Content\img\home\post-sample-image.jpg" />
     <Content Include="Content\img\icons\add-icon.png" />
     <Content Include="Content\img\icons\gear-icon.png" />
+    <Content Include="Content\img\icons\like_200.png" />
     <Content Include="Content\socIco\delicious.png" />
     <Content Include="Content\socIco\facebook.png" />
     <Content Include="Content\socIco\facebook_2.png" />
@@ -472,9 +473,9 @@
     <Content Include="Views\Vkontakte\Index.cshtml" />
     <Content Include="Views\Tool\VkFeedPartial.cshtml" />
     <Content Include="Views\Tool\VkGroupsPartial.cshtml" />
-    <Content Include="Views\Tool\VkPostPartial.cshtml" />
     <Content Include="Views\Tool\VkPostAttachmentPartial.cshtml" />
     <Content Include="Views\Tool\VkImageViewPartial.cshtml" />
+    <Content Include="Views\Tool\VkCommentsPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

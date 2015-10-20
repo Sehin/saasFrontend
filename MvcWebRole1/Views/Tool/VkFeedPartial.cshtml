@@ -6,24 +6,50 @@
     foreach (IVKPost post in Model.feed)
     {
         <div class="post">
-        @switch (post.GetType().Name)
+        @{
+        #region post-header
+        IProfile profile = Model.getProfileById(post.idFrom);
+        switch (profile.GetType().Name)
         {
-            case "Post":
-                Post pst = (Post)post;
-                IProfile profile = Model.getProfileById(pst.idFrom);
-                String text = pst.text;
-                String date = pst.date.Day + "." + pst.date.Month + "." + pst.date.Year + "/" + pst.date.Hour + ":" + pst.date.Minute;
-                Html.RenderPartial("VkPostPartial", profile);
-                
-                <div class="post-time">@date</div>
-                <hr class="blackhr"/>
-                <div class="post-text">@Html.Raw(text)</div>
-                if (post.attach!=null)
-                {
-                    Html.RenderPartial("VkPostAttachmentPartial", post.attach);
-                }
+            case "NFProfile":
+                String url = "http://vk.com/id" + profile.id;
+                String name = ((NFProfile)profile).first_name + " " + ((NFProfile)profile).last_name;
+                <a href="@url">
+                    <img src="@profile.photo_url" class="post-photo" />
+                    <div class="profile-name">
+                        @name
+                    </div>
+                </a>
+                break;
+            case "NFGroup":
+                url = "http://vk.com/id" + ((NFGroup)profile).screen_name;
+                name = ((NFGroup)profile).name;
+                <a href="@url">
+                    <img src="@profile.photo_url" class="post-photo" />
+                    <div class="profile-name">
+                        @name
+                    </div>
+                </a>
                 break;
         }
+        String date = post.date.Day + "." + post.date.Month + "." + post.date.Year + "/" + post.date.Hour + ":" + post.date.Minute;
+        <div class="post-time">@date</div>
+        <hr class="blackhr" />
+        #endregion
+
+}
+                @switch (post.GetType().Name)
+                {
+                    case "Post":
+                        Post pst = (Post)post;
+                        String text = pst.text;
+                        <div class="post-text">@Html.Raw(text)</div>
+                        if (post.attach != null)
+                        {
+                            Html.RenderPartial("VkPostAttachmentPartial", post.attach);
+                        }
+                        break;
+                }
         </div>
     }
 }
@@ -35,8 +61,8 @@
             var id = $(this).attr('data-id');
             var owner_id = $(this).attr('data-owner_id');
             var url = $(this).attr('src');
-
-            $.get(url_ + '?id=' + id + '&owner_id=' + owner_id + '&photo_maxSize_url=' + url, function (data) {
+            var access_key = $(this).attr('data-access_key');
+            $.get(url_ + '?id=' + id + '&owner_id=' + owner_id + '&photo_maxSize_url=' + url + '&access_key='+access_key, function (data) {
                 $('#image-view').html(data);
                 $('#image-view').modal('show');
             });

@@ -1,0 +1,49 @@
+﻿@using MvcWebRole1.Models
+@using MvcWebRole1.Controllers
+@model VkCommentsViewModel
+
+@{
+    foreach (Post post in Model.comments)
+    {
+        <div class="panel panel-default">
+            <div class="panel-body qwe">
+                @{
+        IProfile profile = Model.getProfileById(post.idFrom);
+        switch (profile.GetType().Name)
+        {
+            case "NFProfile":
+                String url = "http://vk.com/id" + profile.id;
+                String name = ((NFProfile)profile).first_name + " " + ((NFProfile)profile).last_name;
+                <a href="@url">
+                    <img src="@profile.photo_url" class="comment-photo" />
+                    <div class="profile-name">
+                        @name
+                    </div>
+                </a>
+                break;
+            case "NFGroup":
+                url = "http://vk.com/id" + ((NFGroup)profile).screen_name;
+                name = ((NFGroup)profile).name;
+                <a href="@url">
+                    <img src="@profile.photo_url" class="post-photo" />
+                    <div class="profile-name">
+                        @name
+                    </div>
+                </a>
+                break;
+        }
+        String date = post.date.Day + "." + post.date.Month + "." + post.date.Year + "/" + post.date.Hour + ":" + post.date.Minute;
+        <div class="post-time">@date</div>
+                    <hr class="blackhr" />
+        <div>@post.text
+         
+        
+        <input type="image" src="~/Content/img/icons/like_200.png" class="like-button" /><div class="like-count">@post.likeCount</div>
+        </div>
+        
+}
+            </div>
+        </div>
+    }
+
+}

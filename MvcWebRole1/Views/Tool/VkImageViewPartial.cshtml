@@ -6,27 +6,35 @@
         <div class="modal-body vk-image-container">
             <img src="@Model.photo_maxSize_url">
         </div>
+        <div class="like-container"
+<h4>Likes : <b id="like-count">@Model.likeCount</b></h4>
+
+@{
+
+    using (Ajax.BeginForm("UnLike", "Vkontakte", new AjaxOptions() { UpdateTargetId = "like-count", OnSuccess = "onUnlikeSuccess" }))
+    {
+        <input type="hidden" value="@Model.id" name="id" />
+        <input type="hidden" value="@Model.owner_id" name="owner_id" />
+        <input type="hidden" value="0" name="type" />
+
+        <button class="btn btn-inverse hidden" type="submit" id="unlike-btn">Unlike :(</button>
+    }
+
+
+    using (Ajax.BeginForm("Like", "Vkontakte", new AjaxOptions() { UpdateTargetId = "like-count", OnSuccess = "onLikeSuccess" }))
+    {
+        <input type="hidden" value="@Model.id" name="id" />
+        <input type="hidden" value="@Model.owner_id" name="owner_id" />
+        <input type="hidden" value="0" name="type" />
+
+        <button class="btn btn-inverse hidden" type="submit" id="like-btn">Like!</button>
+    }
+    }
+        </div>
         <div class="modal-footer">
-            <h4>Likes : <b id="like-count">@Model.likeCount</b></h4>
+            
+              @{  Html.RenderPartial("VkCommentsPartial", Model.comments); }
 
-            @{
-
-                using (Ajax.BeginForm("imageUnLike", "Vkontakte", new AjaxOptions() { UpdateTargetId = "like-count", OnSuccess = "onUnlikeSuccess" }))
-                {
-                    <input type="hidden" value="@Model.id" name="id" />
-                    <input type="hidden" value="@Model.owner_id" name="owner_id" />
-                    <button class="btn btn-inverse hidden" type="submit" id="unlike-btn">Unlike :(</button>
-                }
-
-
-                using (Ajax.BeginForm("imageLike", "Vkontakte", new AjaxOptions() { UpdateTargetId = "like-count", OnSuccess = "onLikeSuccess" }))
-                {
-                        <input type="hidden" value="@Model.id" name="id" />
-                        <input type="hidden" value="@Model.owner_id" name="owner_id" />
-                        <button class="btn btn-inverse hidden" type="submit" id="like-btn">Like!</button>
-                    }
-
-}
         </div>
     </div>
 </div>

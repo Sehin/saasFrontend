@@ -31,13 +31,14 @@ namespace MvcWebRole1.Controllers
         public RedirectResult Auth()
         {
             #region scopeParams
-            scopeParams = new String[6];
+            scopeParams = new String[7];
             scopeParams[0] = "friends";
             scopeParams[1] = "groups";
             scopeParams[2] = "stats";
             scopeParams[3] = "ads";
             scopeParams[4] = "offline";
             scopeParams[5] = "wall";
+            scopeParams[6] = "photos";
             #endregion
             String scopeParamsString = "";
             for (int i = 0; i < scopeParams.Length; i++)
@@ -124,18 +125,26 @@ namespace MvcWebRole1.Controllers
             db.SaveChanges();
             return Redirect("/Tool/SocStudio");
         }
-        public int imageLike(String id, String owner_id)
+        /*type:
+         * 0 - photo
+         * 1 - photo comment
+         * 2 - ..
+         * 
+         */
+        
+        public int Like(String id, String owner_id, int type)
         {
             int userId = getUserId();
             String token = db.SocAccounts.Where(s=>s.SOCNET_TYPE==0 && s.ID_USER==userId).Select(s=>s.TOKEN).Single();
-            return VKWorker.imageLike(id, owner_id, token);
+            return VKWorker.Like(id, owner_id, token,type);
         }
-        public int imageUnlike(String id, String owner_id)
+        public int Unlike(String id, String owner_id, int type)
         {
             int userId = getUserId();
             String token = db.SocAccounts.Where(s => s.SOCNET_TYPE == 0 && s.ID_USER == userId).Select(s => s.TOKEN).Single();
-            return VKWorker.imageUnlike(id, owner_id, token);
+            return VKWorker.imageUnlike(id, owner_id, token, type);
         }
+        
         private int getUserId()
         {
             string login = HttpContext.User.Identity.Name;
@@ -149,20 +158,40 @@ namespace MvcWebRole1.Controllers
     }
     public static class VKWorker
     {
-        public static int imageLike(String id, String owner_id, String token)
+        public static int Like(String id, String owner_id, String token, int type)
         {
             WebClient wc = new WebClient();
             wc.Encoding = Encoding.UTF8;
-            String answer = wc.DownloadString("https://api.vk.com/method/likes.add?type=photo&owner_id=" + owner_id+"&item_id="+id+"&access_token="+token);
+            String type_ = "";
+            switch (type)
+            {
+                case 0:
+                    type_ = "photo";
+                    break;
+                case 1:
+                    type_ = "photo_comment";
+                    break;
+            }
+            String answer = wc.DownloadString("https://api.vk.com/method/likes.add?type="+type_+"&owner_id=" + owner_id+"&item_id="+id+"&access_token="+token);
             JObject obj = JObject.Parse(answer);
             JToken jtoken = obj["response"]["likes"];
             return int.Parse(jtoken.ToString());
         }
-        public static int imageUnlike(String id, String owner_id, String token)
+        public static int imageUnlike(String id, String owner_id, String token, int type)
         {
             WebClient wc = new WebClient();
             wc.Encoding = Encoding.UTF8;
-            String answer = wc.DownloadString("https://api.vk.com/method/likes.delete?type=photo&owner_id=" + owner_id + "&item_id=" + id + "&access_token=" + token);
+            String type_ = "";
+            switch (type)
+            {
+                case 0:
+                    type_ = "photo";
+                    break;
+                case 1:
+                    type_ = "photo_comment";
+                    break;
+            }
+            String answer = wc.DownloadString("https://api.vk.com/method/likes.delete?type="+type_+"&owner_id=" + owner_id + "&item_id=" + id + "&access_token=" + token);
             JObject obj = JObject.Parse(answer);
             JToken jtoken = obj["response"]["likes"];
             return int.Parse(jtoken.ToString());
@@ -387,7 +416,8 @@ namespace MvcWebRole1.Controllers
             {
                 String owner_id = jtoken["owner_id"].ToString();
                 String id = jtoken["pid"].ToString();
-                PhotoAttach pa = new PhotoAttach(owner_id, id, jtoken["src_big"].ToString());
+                String access_key = jtoken["access_key"].ToString();
+                PhotoAttach pa = new PhotoAttach(owner_id, id, jtoken["src_big"].ToString(),access_key);
                 attachments.Add(pa);
                 jtoken = jtoken.Next;
             }
@@ -441,7 +471,8 @@ namespace MvcWebRole1.Controllers
                     case "photo":
                         String owner_id = jtoken["photo"]["owner_id"].ToString();
                         String id = jtoken["photo"]["pid"].ToString();
-                        PhotoAttach pa = new PhotoAttach(owner_id, id, jtoken["photo"]["src_big"].ToString());
+                        String access_key = jtoken["photo"]["access_key"].ToString();
+                        PhotoAttach pa = new PhotoAttach(owner_id, id, jtoken["photo"]["src_big"].ToString(),access_key);
                         attachments.Add(pa);
                         break;
                     case "video":
@@ -491,6 +522,84 @@ namespace MvcWebRole1.Controllers
             Tuple<int, bool> info = new Tuple<int, bool>(count, isLiked);
 
             return info;
+        }
+        public static VkCommentsViewModel getImageComments(String id, String owner_id, int offset, String token, String access_key)
+        {
+            VkCommentsViewModel cvm = new VkCommentsViewModel();
+            WebClient wc = new WebClient();
+            wc.Encoding = Encoding.UTF8;
+            String answer = wc.DownloadString("https://api.vk.com/method/photos.getComments?owner_id=" + owner_id + "&photo_id=" + id + "&access_token=" + token + "&extended=1&offset=" + offset + "&access_key=" + access_key+"&v=5.37&need_likes=1&count=10");
+            JObject obj = JObject.Parse(answer);
+            #region comments
+            JToken jtoken;
+            if (!obj["response"]["count"].ToString().Equals("0"))
+            {
+                jtoken = obj["response"]["items"].First;
+                List<Post> comments = new List<Post>();
+                do
+                {
+                    Post post = new Post();
+                    post.id = jtoken["id"].ToString();
+                    post.idFrom = jtoken["from_id"].ToString();
+                    post.date = (new DateTime(1970, 1, 1, 0, 0, 0, 0)).AddSeconds(int.Parse(jtoken["date"].ToString()));
+                    post.text = jtoken["text"].ToString();
+                    String isLikedI = jtoken["likes"]["user_likes"].ToString();
+                    if (isLikedI.Equals("1"))
+                        post.isLiked = true;
+                    else post.isLiked = false;
+
+                    try
+                    {
+                        if (jtoken["attachments"].First.HasValues)
+                        {
+                            post.attach = getAttachments(jtoken);
+                        }
+                    }
+                    catch (Exception e)
+                    { }
+                    comments.Add(post);
+                    jtoken = jtoken.Next;
+                } while (jtoken != null);
+                cvm.comments = comments;
+            }
+            #endregion
+            #region profiles
+            jtoken = obj["response"]["profiles"].First;
+            if (jtoken != null)
+            {
+                do
+                {
+                    NFProfile profile = new NFProfile();
+                    profile.id = jtoken["id"].ToString();
+                    profile.first_name = jtoken["first_name"].ToString();
+                    profile.last_name = jtoken["last_name"].ToString();
+                    profile.photo_url = jtoken["photo_100"].ToString();
+
+                    cvm.profiles.Add(profile);
+                    jtoken = jtoken.Next;
+                }
+                while (jtoken != null);
+            }
+            #endregion
+            #region groups
+            jtoken = obj["response"]["groups"].First;
+            if (jtoken != null)
+            {
+                do
+                {
+                    NFGroup group = new NFGroup();
+                    group.id = jtoken["gid"].ToString();
+                    group.name = jtoken["name"].ToString();
+                    group.screen_name = jtoken["screen_name"].ToString();
+                    group.photo_url = jtoken["photo"].ToString();
+
+                    cvm.groups.Add(group);
+                    jtoken = jtoken.Next;
+                }
+                while (jtoken != null);
+            }
+            #endregion
+            return cvm;
         }
         private static int getUserId()
         {
@@ -598,6 +707,8 @@ namespace MvcWebRole1.Controllers
         String owner_id { get; set; }
         String id { get; set; }
     }
+   
+
     public class PhotoAttach : IAttachments
     {
         public String owner_id { get; set; }
@@ -605,11 +716,14 @@ namespace MvcWebRole1.Controllers
         public String photo_maxSize_url { get; set; }
         public int likeCount { get; set; }
         public bool isLiked { get; set; }
-        public PhotoAttach(String owner_id, String id, String photo_maxSize_url)
+        public List<Post> comments { get; set; }
+        public String access_key { get; set; }
+        public PhotoAttach(String owner_id, String id, String photo_maxSize_url, String access_key)
         {
             this.owner_id = owner_id;
             this.id = id;
             this.photo_maxSize_url = photo_maxSize_url;
+            this.access_key = access_key;
         }
     }
     public class VideoAttach : IAttachments
@@ -620,6 +734,7 @@ namespace MvcWebRole1.Controllers
         public String description { get; set; }
         public int likeCount { get; set; }
         public bool isLiked { get; set; }
+        public List<Post> comments { get; set; }
         public VideoAttach(String owner_id, String id, String title, String description)
         {
             this.owner_id = owner_id;
@@ -675,6 +790,7 @@ namespace MvcWebRole1.Controllers
         public String photo_maxSize_url;
         public int likeCount;
         public bool isLiked;
+        public VkCommentsViewModel comments { get; set; }
         public VkImageViewModel(String id, String owner_id, String photo_maxSize_url, int likeCount, bool isLiked)
         {
             this.id = id;
@@ -682,6 +798,40 @@ namespace MvcWebRole1.Controllers
             this.photo_maxSize_url = photo_maxSize_url;
             this.likeCount = likeCount;
             this.isLiked = isLiked;
+        }
+    }
+    public class VkCommentsViewModel
+    {
+        public List<Post> comments { get; set; }
+        public List<NFProfile> profiles { get; set; }
+        public List<NFGroup> groups { get; set; }
+        public VkCommentsViewModel()
+        {
+            comments = new List<Post>();
+            profiles = new List<NFProfile>();
+            groups = new List<NFGroup>();
+        }
+        public IProfile getProfileById(string id)
+        {
+            long id_ = Int64.Parse(id);
+            if (id_ > 0)
+            {
+                foreach (NFProfile profile in profiles)
+                {
+                    if (profile.id.Equals(id))
+                        return profile;
+                }
+            }
+            else
+            {
+                id_ *= -1;
+                foreach (NFGroup group in groups)
+                {
+                    if (group.id.Equals(id_.ToString()))
+                        return group;
+                }
+            }
+            return null;
         }
     }
 }

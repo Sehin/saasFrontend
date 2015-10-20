@@ -10,12 +10,12 @@
             if(attachment.GetType().Name.Equals("PhotoAttach"))
             {
                 PhotoAttach pa = (PhotoAttach)attachment;
-                <img class="vk-image" src="@pa.photo_maxSize_url" data-id="@pa.id" data-owner_id="@pa.owner_id" />
+                <img class="vk-image" src="@pa.photo_maxSize_url" data-id="@pa.id" data-owner_id="@pa.owner_id" data-access_key="@pa.access_key"/>
             }
             if (attachment.GetType().Name.Equals("VideoAttach"))
             {
                 VideoAttach pa = (VideoAttach)attachment;
-                <img class="vk-image" src="@pa.photo_maxSize_url" data-id="@pa.id" data-owner_id="@pa.owner_id" />
+                //<img class="vk-image" src="@pa.photo_maxSize_url" data-id="@pa.id" data-owner_id="@pa.owner_id" />
             }
         }
     </div>

@@ -43,12 +43,14 @@ namespace MvcWebRole1.Controllers
         {
             return PartialView(attachment);
         }
-        public PartialViewResult VkImageViewPartial(String id, String owner_id, String photo_maxSize_url)
+        public PartialViewResult VkImageViewPartial(String id, String owner_id, String photo_maxSize_url, String access_key)
         {
             int user_id = getUserId();
             String token = db.SocAccounts.Where(s => s.ID_USER == user_id && s.SOCNET_TYPE == 0).Select(s => s.TOKEN).Single();
             Tuple<int, bool> likeInfo = VKWorker.getImageLikeInfo(id, owner_id, token);
-            return PartialView(new VkImageViewModel(id,owner_id,photo_maxSize_url,likeInfo.Item1,likeInfo.Item2));
+            VkImageViewModel vivm = new VkImageViewModel(id, owner_id, photo_maxSize_url, likeInfo.Item1, likeInfo.Item2);
+            vivm.comments = VKWorker.getImageComments(id, owner_id, 0, token, access_key);
+            return PartialView(vivm);
         }
         public PartialViewResult VkFeedPartial()
         {

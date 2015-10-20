@@ -72,7 +72,7 @@ display:block; text-align:center; margin:0 auto;
     -ms-filter: brightness(0.2);
     cursor: pointer;
 }
-.gear-button:focus, .add-button:focus, .gear-button-group{
+.gear-button:focus, .add-button:focus, .gear-button-group, .like-button:focus{
     outline:none;
 }
 
@@ -96,11 +96,25 @@ display:block; text-align:center; margin:0 auto;
 }
 
 .post-photo{
+    float:left;
     height:50px;
     width:50px;
     position:relative;
     cursor: pointer;
     margin:10px;
+}
+
+.comment-photo{
+    float:left;
+    height:50px;
+    width:50px;
+    cursor: pointer;
+    margin:10px;
+}
+
+.like-container{
+    position:relative;
+    padding: 0 25px;
 }
 
 .profile-name{
@@ -124,7 +138,9 @@ display:block; text-align:center; margin:0 auto;
     background-color:#d7eaff;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
-
+.post-text{
+    padding:0 10px;
+}
 .social-list{
     padding:10px 0;
 
@@ -134,7 +150,33 @@ display:block; text-align:center; margin:0 auto;
     width: 32%;
     height: auto;
 }
+.vk-image:hover{
+    transition-duration:0.5s;
+    filter: brightness(0.7);
+    -webkit-filter: brightness(0.7);
+    -moz-filter: brightness(0.7);
+    -o-filter: brightness(0.7);
+    -ms-filter: brightness(0.7);
+}
 .vk-image-container{
     text-align:center;
     margin-bottom: 10px;
+}
+
+.like-button{
+    height:25px;
+    width:25px;
+    float:left;
+    display:inline;
+}
+.like-button:hover{
+    transition-duration:0.5s;
+    transform: rotate(30deg);
+    transform: scale(1.5,1.5);
+
+}
+.like-count{
+    padding:0 10px;
+    float:left;
+    display:inline;
 }
