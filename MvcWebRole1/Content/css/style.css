@@ -72,7 +72,8 @@ display:block; text-align:center; margin:0 auto;
     -ms-filter: brightness(0.2);
     cursor: pointer;
 }
-.gear-button:focus, .add-button:focus, .gear-button-group, .like-button:focus{
+.gear-button:focus, .add-button:focus, .gear-button-group, .like-button:focus,
+.unlike-button:focus{
     outline:none;
 }
 
@@ -173,8 +174,21 @@ display:block; text-align:center; margin:0 auto;
     transition-duration:0.5s;
     transform: rotate(30deg);
     transform: scale(1.5,1.5);
-
 }
+
+.unlike-button{
+    height:25px;
+    width:25px;
+    float:left;
+    display:inline;
+    transform: rotate(180deg);
+}
+
+.unlike-button:hover{
+    transition-duration:0.5s;
+    transform: scale(1.5,1.5);
+}
+
 .like-count{
     padding:0 10px;
     float:left;

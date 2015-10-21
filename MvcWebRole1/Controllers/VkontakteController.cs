@@ -172,10 +172,24 @@ namespace MvcWebRole1.Controllers
                     type_ = "photo_comment";
                     break;
             }
-            String answer = wc.DownloadString("https://api.vk.com/method/likes.add?type="+type_+"&owner_id=" + owner_id+"&item_id="+id+"&access_token="+token);
+
+            // Check is in Like List already
+            String answer = wc.DownloadString("https://api.vk.com/method/likes.isLiked?type=" + type_ + "&owner_id=" + owner_id + "&item_id=" + id + "&access_token=" + token);
             JObject obj = JObject.Parse(answer);
-            JToken jtoken = obj["response"]["likes"];
-            return int.Parse(jtoken.ToString());
+            if(obj["resonse"].ToString().Equals("0"))  // Not Liked
+            {
+                answer = wc.DownloadString("https://api.vk.com/method/likes.add?type=" + type_ + "&owner_id=" + owner_id + "&item_id=" + id + "&access_token=" + token);
+                obj = JObject.Parse(answer);
+                JToken jtoken = obj["response"]["likes"];
+                return int.Parse(jtoken.ToString());
+            }
+            else
+            {
+                answer = wc.DownloadString("https://api.vk.com/method/likes.delete?type=" + type_ + "&owner_id=" + owner_id + "&item_id=" + id + "&access_token=" + token);
+                obj = JObject.Parse(answer);
+                JToken jtoken = obj["response"]["likes"];
+                return int.Parse(jtoken.ToString());
+            }     
         }
         public static int imageUnlike(String id, String owner_id, String token, int type)
         {
@@ -471,7 +485,11 @@ namespace MvcWebRole1.Controllers
                     case "photo":
                         String owner_id = jtoken["photo"]["owner_id"].ToString();
                         String id = jtoken["photo"]["pid"].ToString();
-                        String access_key = jtoken["photo"]["access_key"].ToString();
+                        String access_key = "";
+                        if (jtoken["photo"]["access_key"] != null)
+                        {
+                            access_key = jtoken["photo"]["access_key"].ToString();
+                        }
                         PhotoAttach pa = new PhotoAttach(owner_id, id, jtoken["photo"]["src_big"].ToString(),access_key);
                         attachments.Add(pa);
                         break;

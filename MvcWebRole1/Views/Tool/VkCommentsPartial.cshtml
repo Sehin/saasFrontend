@@ -37,11 +37,28 @@
                     <hr class="blackhr" />
         <div>@post.text
          
-        
-        <input type="image" src="~/Content/img/icons/like_200.png" class="like-button" /><div class="like-count">@post.likeCount</div>
+        @{
+            String img_class = "";
+            if (post.isLiked)
+            {
+                img_class = "unlike-button";
+            }
+            else
+            {
+                img_class = "like-button";
+            }
+            
+        }
+        @using (Ajax.BeginForm("Like", "Vkontakte", new AjaxOptions() { UpdateTargetId = "like-count-" + post.id, OnSuccess = "onUnlikeSuccess" }))
+        {
+            <input type="hidden" value="@post.id" name="id" />
+            <input type="hidden" value="@post.idFrom" name="owner_id" />
+            <input type="hidden" value="1" name="type" />
+            <input type="image" src="~/Content/img/icons/like_200.png" class="@img_class" /><div class="like-count" id="like-count-@post.id">@post.likeCount</div>
+        }
         </div>
         
-}
+        }
             </div>
         </div>
     }
