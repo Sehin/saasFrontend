@@ -6,60 +6,42 @@
         <div class="modal-body vk-image-container">
             <img src="@Model.photo_maxSize_url">
         </div>
-        <div class="like-container"
-<h4>Likes : <b id="like-count">@Model.likeCount</b></h4>
+        <div class="like-container">
+            @{
+                int offset = 10;
+                String img_class = "";
+                if (Model.isLiked)
+                {
+                    img_class = "unlike-button";
+                }
+                else
+                {
+                    img_class = "like-button";
+                }
+                
+            }
 
-@{
 
-    using (Ajax.BeginForm("UnLike", "Vkontakte", new AjaxOptions() { UpdateTargetId = "like-count", OnSuccess = "onUnlikeSuccess" }))
-    {
-        <input type="hidden" value="@Model.id" name="id" />
-        <input type="hidden" value="@Model.owner_id" name="owner_id" />
-        <input type="hidden" value="0" name="type" />
-
-        <button class="btn btn-inverse hidden" type="submit" id="unlike-btn">Unlike :(</button>
-    }
-
-
-    using (Ajax.BeginForm("Like", "Vkontakte", new AjaxOptions() { UpdateTargetId = "like-count", OnSuccess = "onLikeSuccess" }))
-    {
-        <input type="hidden" value="@Model.id" name="id" />
-        <input type="hidden" value="@Model.owner_id" name="owner_id" />
-        <input type="hidden" value="0" name="type" />
-
-        <button class="btn btn-inverse hidden" type="submit" id="like-btn">Like!</button>
-    }
-    }
+            @using (Ajax.BeginForm("Like", "Vkontakte", new AjaxOptions() { UpdateTargetId = "like-count" }))
+            {
+                <input type="hidden" value="@Model.id" name="id" />
+                <input type="hidden" value="@Model.owner_id" name="owner_id" />
+                <input type="hidden" value="0" name="type" />
+                <input type="image" src="~/Content/img/icons/like_200.png" class="@img_class" /><div class="like-count" id="like-count">@Model.likeCount</div>
+            }
         </div>
-        <div class="modal-footer">
-            
-              @{  Html.RenderPartial("VkCommentsPartial", Model.comments); }
+        <div class="modal-footer" id="comments">
 
+            @{Html.RenderPartial("VkCommentsPartial", Model.comments);}
+
+            @using (Ajax.BeginForm("VkAddCommentsPartial", "Tool", new AjaxOptions() { UpdateTargetId = "comments", InsertionMode = InsertionMode.InsertAfter}))
+            {
+                <input type="hidden" value="@Model.id" name="id" />
+                <input type="hidden" value="@Model.owner_id" name="owner_id" />
+                <input type="hidden" value="@Model.access_key" name="access_key" />
+                <input type="hidden" value="@offset" name="offset" />
+                <input type="submit" btn btn-default" value="Загрузить следующие 10" />
+            }
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-
-    $(document).ready(function () {
-        if(@Model.isLiked.ToString().ToLower()==true)
-        {
-            $('#like-btn').addClass('hidden')
-            $('#unlike-btn').removeClass('hidden')
-        }
-        else
-        {
-            $('#unlike-btn').addClass('hidden');
-            $('#like-btn').removeClass('hidden');
-        }
-    });
-
-    function onLikeSuccess() {
-        $('#like-btn').addClass('hidden');
-        $('#unlike-btn').removeClass('hidden');
-    }
-    function onUnlikeSuccess() {
-        $('#unlike-btn').addClass('hidden');
-        $('#like-btn').removeClass('hidden');
-    }
-</script>

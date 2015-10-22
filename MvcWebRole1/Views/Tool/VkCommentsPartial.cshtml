@@ -6,7 +6,7 @@
     foreach (Post post in Model.comments)
     {
         <div class="panel panel-default">
-            <div class="panel-body qwe">
+            <div class="panel-body">
                 @{
         IProfile profile = Model.getProfileById(post.idFrom);
         switch (profile.GetType().Name)
@@ -52,7 +52,7 @@
         @using (Ajax.BeginForm("Like", "Vkontakte", new AjaxOptions() { UpdateTargetId = "like-count-" + post.id, OnSuccess = "onUnlikeSuccess" }))
         {
             <input type="hidden" value="@post.id" name="id" />
-            <input type="hidden" value="@post.idFrom" name="owner_id" />
+            <input type="hidden" value="@Model.owner_id" name="owner_id"/>
             <input type="hidden" value="1" name="type" />
             <input type="image" src="~/Content/img/icons/like_200.png" class="@img_class" /><div class="like-count" id="like-count-@post.id">@post.likeCount</div>
         }
@@ -63,4 +63,14 @@
         </div>
     }
 
+    <script>
+        $('.like-button').click(function () {
+            $(this).toggleClass('unlike-button');
+            $(this).toggleClass('like-button');
+        });
+        $('.unlike-button').click(function () {
+            $(this).toggleClass('unlike-button');
+            $(this).toggleClass('like-button');
+        });
+    </script>
 }

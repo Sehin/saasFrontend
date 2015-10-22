@@ -49,6 +49,16 @@
                             Html.RenderPartial("VkPostAttachmentPartial", post.attach);
                         }
                         break;
+                    case "WallPhoto":
+                        WallPhoto wallphoto = (WallPhoto)post;
+                        if (post.attach != null)
+                        {
+                            Html.RenderPartial("VkPostAttachmentPartial", post.attach);
+                        }
+                        break;
+                        default:
+
+                        break;
                 }
         </div>
     }

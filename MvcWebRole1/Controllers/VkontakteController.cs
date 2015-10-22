@@ -151,6 +151,13 @@ namespace MvcWebRole1.Controllers
             return db.Users.Where(u => u.Email == login).FirstOrDefault().Id;
         }
 
+        public VkCommentsViewModel GetImageComments(String id, String owner_id, int offset, String access_key)
+        {
+            int userId = getUserId();
+            String token = db.SocAccounts.Where(s => s.SOCNET_TYPE == 0 && s.ID_USER == userId).Select(s => s.TOKEN).Single();
+            return VKWorker.getImageComments(id, owner_id, offset, token, access_key);
+        }
+
         public void testIt()
         {
             //VKWorker.getNewsfeed();
@@ -176,7 +183,7 @@ namespace MvcWebRole1.Controllers
             // Check is in Like List already
             String answer = wc.DownloadString("https://api.vk.com/method/likes.isLiked?type=" + type_ + "&owner_id=" + owner_id + "&item_id=" + id + "&access_token=" + token);
             JObject obj = JObject.Parse(answer);
-            if(obj["resonse"].ToString().Equals("0"))  // Not Liked
+            if(obj["response"].ToString().Equals("0"))  // Not Liked
             {
                 answer = wc.DownloadString("https://api.vk.com/method/likes.add?type=" + type_ + "&owner_id=" + owner_id + "&item_id=" + id + "&access_token=" + token);
                 obj = JObject.Parse(answer);
@@ -544,6 +551,7 @@ namespace MvcWebRole1.Controllers
         public static VkCommentsViewModel getImageComments(String id, String owner_id, int offset, String token, String access_key)
         {
             VkCommentsViewModel cvm = new VkCommentsViewModel();
+            cvm.owner_id = owner_id;
             WebClient wc = new WebClient();
             wc.Encoding = Encoding.UTF8;
             String answer = wc.DownloadString("https://api.vk.com/method/photos.getComments?owner_id=" + owner_id + "&photo_id=" + id + "&access_token=" + token + "&extended=1&offset=" + offset + "&access_key=" + access_key+"&v=5.37&need_likes=1&count=10");
@@ -552,33 +560,37 @@ namespace MvcWebRole1.Controllers
             JToken jtoken;
             if (!obj["response"]["count"].ToString().Equals("0"))
             {
-                jtoken = obj["response"]["items"].First;
-                List<Post> comments = new List<Post>();
-                do
+                if (obj["response"]["items"].HasValues)
                 {
-                    Post post = new Post();
-                    post.id = jtoken["id"].ToString();
-                    post.idFrom = jtoken["from_id"].ToString();
-                    post.date = (new DateTime(1970, 1, 1, 0, 0, 0, 0)).AddSeconds(int.Parse(jtoken["date"].ToString()));
-                    post.text = jtoken["text"].ToString();
-                    String isLikedI = jtoken["likes"]["user_likes"].ToString();
-                    if (isLikedI.Equals("1"))
-                        post.isLiked = true;
-                    else post.isLiked = false;
-
-                    try
+                    jtoken = obj["response"]["items"].First;
+                    List<Post> comments = new List<Post>();
+                    do
                     {
-                        if (jtoken["attachments"].First.HasValues)
+                        Post post = new Post();
+                        post.id = jtoken["id"].ToString();
+                        post.idFrom = jtoken["from_id"].ToString();
+                        post.date = (new DateTime(1970, 1, 1, 0, 0, 0, 0)).AddSeconds(int.Parse(jtoken["date"].ToString()));
+                        post.text = jtoken["text"].ToString();
+                        post.likeCount = int.Parse(jtoken["likes"]["count"].ToString());
+                        String isLikedI = jtoken["likes"]["user_likes"].ToString();
+                        if (isLikedI.Equals("1"))
+                            post.isLiked = true;
+                        else post.isLiked = false;
+
+                        try
                         {
-                            post.attach = getAttachments(jtoken);
+                            if (jtoken["attachments"].First.HasValues)
+                            {
+                                post.attach = getAttachments(jtoken);
+                            }
                         }
-                    }
-                    catch (Exception e)
-                    { }
-                    comments.Add(post);
-                    jtoken = jtoken.Next;
-                } while (jtoken != null);
-                cvm.comments = comments;
+                        catch (Exception e)
+                        { }
+                        comments.Add(post);
+                        jtoken = jtoken.Next;
+                    } while (jtoken != null);
+                    cvm.comments = comments;
+                }
             }
             #endregion
             #region profiles
@@ -730,6 +742,7 @@ namespace MvcWebRole1.Controllers
     public class PhotoAttach : IAttachments
     {
         public String owner_id { get; set; }
+        public String group_id { get; set; }
         public String id { get; set; }
         public String photo_maxSize_url { get; set; }
         public int likeCount { get; set; }
@@ -805,9 +818,11 @@ namespace MvcWebRole1.Controllers
     {
         public String id;
         public String owner_id;
+        public String group_id;
         public String photo_maxSize_url;
         public int likeCount;
         public bool isLiked;
+        public String access_key;
         public VkCommentsViewModel comments { get; set; }
         public VkImageViewModel(String id, String owner_id, String photo_maxSize_url, int likeCount, bool isLiked)
         {
@@ -820,6 +835,7 @@ namespace MvcWebRole1.Controllers
     }
     public class VkCommentsViewModel
     {
+        public String owner_id { get; set; }
         public List<Post> comments { get; set; }
         public List<NFProfile> profiles { get; set; }
         public List<NFGroup> groups { get; set; }

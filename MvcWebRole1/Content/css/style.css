@@ -115,7 +115,7 @@ display:block; text-align:center; margin:0 auto;
 
 .like-container{
     position:relative;
-    padding: 0 25px;
+    padding: 0px 25px 25px 25px;
 }
 
 .profile-name{
@@ -153,11 +153,12 @@ display:block; text-align:center; margin:0 auto;
 }
 .vk-image:hover{
     transition-duration:0.5s;
-    filter: brightness(0.7);
-    -webkit-filter: brightness(0.7);
-    -moz-filter: brightness(0.7);
-    -o-filter: brightness(0.7);
-    -ms-filter: brightness(0.7);
+    transform: scale(1.3,1.3);
+    filter: brightness(1.3);
+    -webkit-filter: brightness(1.3);
+    -moz-filter: brightness(1.3);
+    -o-filter: brightness(1.3);
+    -ms-filter: brightness(1.3);
 }
 .vk-image-container{
     text-align:center;
@@ -170,6 +171,7 @@ display:block; text-align:center; margin:0 auto;
     float:left;
     display:inline;
 }
+
 .like-button:hover{
     transition-duration:0.5s;
     transform: rotate(30deg);
@@ -187,6 +189,7 @@ display:block; text-align:center; margin:0 auto;
 .unlike-button:hover{
     transition-duration:0.5s;
     transform: scale(1.5,1.5);
+    transform: rotate(540deg);
 }
 
 .like-count{
