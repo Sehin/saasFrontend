@@ -32,7 +32,9 @@
         </div>
         <div class="modal-footer" id="comments">
 
-            @{Html.RenderPartial("VkCommentsPartial", Model.comments);}
+          @{
+             // Html.RenderPartial("VkCommentsPartial", Model.comments);
+              }
 
             @using (Ajax.BeginForm("VkAddCommentsPartial", "Tool", new AjaxOptions() { UpdateTargetId = "comments", InsertionMode = InsertionMode.InsertAfter}))
             {

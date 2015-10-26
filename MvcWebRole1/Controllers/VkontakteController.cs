@@ -21,9 +21,9 @@ namespace MvcWebRole1.Controllers
         {
             return View();
         }
-        String client_id = "5070823";
-        String redirect_uri = "http://localhost:65413/Vkontakte/getToken/";
-        String client_secret = "7LCpt00ZrUCThUwyyYum";
+        String client_id = "5117254";
+        String redirect_uri = "http://http://saas4us.azurewebsites.net/Vkontakte/getToken/";
+        String client_secret = "g7wpaBAwJstZy09boZQG";
         String api_version = "5.33";
         String[] scopeParams;
         DatabaseContext db = new DatabaseContext();
@@ -158,9 +158,9 @@ namespace MvcWebRole1.Controllers
             return VKWorker.getImageComments(id, owner_id, offset, token, access_key);
         }
 
-        public void testIt()
+        public String testIt(String token)
         {
-            //VKWorker.getNewsfeed();
+            return VKWorker.getImageComments1("386567796", "-39830322", 0, token, "5a27de61409e3d3200");
         }
     }
     public static class VKWorker
@@ -560,9 +560,9 @@ namespace MvcWebRole1.Controllers
             JToken jtoken;
             if (!obj["response"]["count"].ToString().Equals("0"))
             {
-                if (obj["response"]["items"].HasValues)
+                if (true/*obj["response"]["items"].HasValues*/)
                 {
-                    jtoken = obj["response"]["items"].First;
+                    /*jtoken = obj["response"]["items"].First;
                     List<Post> comments = new List<Post>();
                     do
                     {
@@ -589,11 +589,11 @@ namespace MvcWebRole1.Controllers
                         comments.Add(post);
                         jtoken = jtoken.Next;
                     } while (jtoken != null);
-                    cvm.comments = comments;
+                    cvm.comments = comments;*/
                 }
             }
             #endregion
-            #region profiles
+        /*    #region profiles
             jtoken = obj["response"]["profiles"].First;
             if (jtoken != null)
             {
@@ -628,8 +628,92 @@ namespace MvcWebRole1.Controllers
                 }
                 while (jtoken != null);
             }
-            #endregion
+            #endregion */
             return cvm;
+        }
+        public static String getImageComments1(String id, String owner_id, int offset, String token, String access_key)
+        {
+            VkCommentsViewModel cvm = new VkCommentsViewModel();
+            cvm.owner_id = owner_id;
+            WebClient wc = new WebClient();
+            wc.Encoding = Encoding.UTF8;
+            String answer = wc.DownloadString("https://api.vk.com/method/photos.getComments?owner_id=" + owner_id + "&photo_id=" + id + "&access_token=" + token + "&extended=1&offset=" + offset + "&access_key=" + access_key + "&v=5.37&need_likes=1&count=10");
+            JObject obj = JObject.Parse(answer);
+            #region comments
+            JToken jtoken;
+            return obj.ToString();
+            if (!obj["response"]["count"].ToString().Equals("0"))
+            {
+                if (true/*obj["response"]["items"].HasValues*/)
+                {
+                    /*jtoken = obj["response"]["items"].First;
+                    List<Post> comments = new List<Post>();
+                    do
+                    {
+                        Post post = new Post();
+                        post.id = jtoken["id"].ToString();
+                        post.idFrom = jtoken["from_id"].ToString();
+                        post.date = (new DateTime(1970, 1, 1, 0, 0, 0, 0)).AddSeconds(int.Parse(jtoken["date"].ToString()));
+                        post.text = jtoken["text"].ToString();
+                        post.likeCount = int.Parse(jtoken["likes"]["count"].ToString());
+                        String isLikedI = jtoken["likes"]["user_likes"].ToString();
+                        if (isLikedI.Equals("1"))
+                            post.isLiked = true;
+                        else post.isLiked = false;
+
+                        try
+                        {
+                            if (jtoken["attachments"].First.HasValues)
+                            {
+                                post.attach = getAttachments(jtoken);
+                            }
+                        }
+                        catch (Exception e)
+                        { }
+                        comments.Add(post);
+                        jtoken = jtoken.Next;
+                    } while (jtoken != null);
+                    cvm.comments = comments;*/
+                }
+            }
+            #endregion
+            /*    #region profiles
+            jtoken = obj["response"]["profiles"].First;
+            if (jtoken != null)
+            {
+                do
+                {
+                    NFProfile profile = new NFProfile();
+                    profile.id = jtoken["id"].ToString();
+                    profile.first_name = jtoken["first_name"].ToString();
+                    profile.last_name = jtoken["last_name"].ToString();
+                    profile.photo_url = jtoken["photo_100"].ToString();
+
+                    cvm.profiles.Add(profile);
+                    jtoken = jtoken.Next;
+                }
+                while (jtoken != null);
+            }
+            #endregion
+            #region groups
+            jtoken = obj["response"]["groups"].First;
+            if (jtoken != null)
+            {
+                do
+                {
+                    NFGroup group = new NFGroup();
+                    group.id = jtoken["gid"].ToString();
+                    group.name = jtoken["name"].ToString();
+                    group.screen_name = jtoken["screen_name"].ToString();
+                    group.photo_url = jtoken["photo"].ToString();
+
+                    cvm.groups.Add(group);
+                    jtoken = jtoken.Next;
+                }
+                while (jtoken != null);
+            }
+            #endregion */
+            return "";
         }
         private static int getUserId()
         {

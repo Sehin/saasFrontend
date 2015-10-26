@@ -42,7 +42,6 @@ namespace MvcWebRole1.Controllers
             else
                 return View();
         }
-
         public PartialViewResult ContentPanelPartial()
         {
             List<ContentView> contentViews = new List<ContentView>();
@@ -54,8 +53,7 @@ namespace MvcWebRole1.Controllers
                 contentViews.Add(new ContentView(content.CONTENT_TEXT, content.CONTENT_TITLE, contentDatas.ToArray(), content.ID_CO));
             }
             return PartialView(contentViews);
-        }
-        
+        }     
         public void DeleteImage(int contentId)
         {
             ContentData cd = db.ContentDatas.Where(c => c.ID_CD == contentId).Single();
@@ -65,8 +63,7 @@ namespace MvcWebRole1.Controllers
 
             db.ContentDatas.Remove(cd);
             db.SaveChanges();     
-        }
-        
+        }    
         [HttpPost]
         public ActionResult AddContent(HttpPostedFileBase[] fileBase, String text, String title, String tags, int ContentId=-1)
         {
@@ -122,8 +119,7 @@ namespace MvcWebRole1.Controllers
                 PostImage(fileBase[i], content.ID_CO);
             }
             return RedirectToAction("Index", new { contentId = content.ID_CO });
-        }
-        
+        }        
         public String PostImage(HttpPostedFileBase fileBase, int content_id)
         {
             if (fileBase != null)
@@ -140,14 +136,12 @@ namespace MvcWebRole1.Controllers
                 }
             }
             return null;
-        }
-        
+        }        
         public int getUserId()
         {
             string login = HttpContext.User.Identity.Name;
             return db.Users.Where(u => u.Email == login).FirstOrDefault().Id;
         }
-
         public ActionResult DeleteContent(int idContent)
         {
             Content content = db.Contents.Where(c => c.ID_CO == idContent).Single();
